@@ -39,7 +39,7 @@ by \code{'appac@correction'}.
 
 ## Not run:
 library(appac)
-## library(dplyr)
+library(dplyr)
 
 ## PGC_TCD is a short dataset of weekly measurements of 1 control sample taken on
 ## process analyzer. The data frame needs to be filtered as it contains several
