@@ -8,7 +8,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{APPAC User Guide}
+  %\VignetteIndexEntry{Theory of the pressure effect}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 header-includes:
@@ -119,7 +119,7 @@ recombine so that there remains a net zero charge.
 It is well known that an FID will saturate at high analyte 
 concentrations. This saturation is caused by a space charge effect. When a massive 
 amount of ions is generated, they partially shield the electric field and slow 
-down the migration speed. So more ions and electrons have time to recombine and 
+down the migration speed of the ions. So ions and electrons have more time to recombine and 
 the detector sensitivity decreases.
 
 Pressure primarily affects the flame geometry, but in a complicated way.
