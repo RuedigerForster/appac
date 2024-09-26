@@ -138,7 +138,7 @@ are zero, cf. Fig. 1.
 
 Our measurements indicate that FID response typically changes a rate between -0.7% 
 and -0.8% per 10 hPa per 10 hPa of pressure increase. A rate of -1.0% would indicate that 
-response and pressure are inversely proportional.
+detector response and pressure are inversely proportional.
 
 
 ![Fig. 1: Cutaway diagram of an FID (Source: www.agilent.com)][Fig 1.]{width=100%}
