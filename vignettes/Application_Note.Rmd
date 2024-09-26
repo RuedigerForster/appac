@@ -1,0 +1,25 @@
+---
+title: "Improving Area Precision in Gas Chromatography with Standard Detectors"
+subtitle: "Application Note"
+author: "Rüdiger Forster"
+description: |
+    Application Note
+output:
+    rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Application Note}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+header-includes:
+  - \usepackage[subrefformat=simple]{subfig}
+---
+
+```{r setup, include = FALSE}
+options(rmarkdown.html_vignette.check_title = FALSE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
