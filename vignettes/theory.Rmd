@@ -39,7 +39,7 @@ pressure variations have on the output of a chromatographic analyzer. This corre
 should be determined in conjunction with the calibration of the instrument. The authors 
 of the patent quantificate the pressure effect as follows:
 
-$$ \frac {C_m} {C_a} = 1 + M \left( \frac{P_a}{P_c} - 1 \right)  $$
+$$ \frac {C_m} {C_a} = 1 + M \left( \frac{P_a}{P_c} - 1 \right) $$
 where:
 
 $P_a$:  atmospheric pressure at the time the sample was measured
@@ -75,9 +75,11 @@ topic  appear in a standard for the testing of flame ionization detectors [6].
 A pressure influence on FID response is even expressly rejected in another 
 standard [7].
 
-## Theory of the flame ionization detector
+## Details
 
-Theory is that an FID is a mass sensitive detector. An atmospheric premixed laminar 
+### Theory of the flame ionization detector
+
+Theory is that an FID is a mass sensitive detector. An atmospheric 
 hydrogen-air flame forms its core. Any organic compound that reaches the flame produces ions
 in amounts which are almost perfectly proportional to the mass of carbon atoms reaching the flame [8].
 
@@ -85,10 +87,12 @@ Technically speaking, the FID measures the rate at which these ions are produced
 and subsequently collected. Its output voltage V is expected to be proportional 
 to the ion formation rate $\dot{n}$ and the charge collection efficiency $\eta_c$.
 
-$$V \propto \eta_c \dot{n} = \eta_c\left( r_{br}  \frac{x_CM_C}{M_G} \right) \left(F_d  \frac{P M_G}{RT} \right)$$
+$$V \propto \eta_c \dot{n} = \eta_c(P, \theta)   \left[] r_{br}(\theta) \times \frac{x_CM_C}{M_G} \right] \left[ F_d \times \frac{P M_G}{RT} \right]$$
 where:
 
-$r_{br}$: branching ratio; total ion formation rate divided by global reaction rate
+$r_{br}$: branching ratio; total ion formation rate divided by the overall reaction (burning) rate
+
+$\theta$: adiabatic flame temperature
 
 $x_C$: mole fraction of carbon in the feed gas
 
@@ -104,11 +108,11 @@ $R$: gas constant
 
 $T$: temperature
 
-The expression in the left bracket gives the mass ratio of ions formed in the burning 
-feed gas, while the expression in the right bracket represents the mass flow rate into
-the jet.
+The expression in the left square bracket gives the mass ratio of ions formed in the burning 
+feed gas, while the expression in the right square bracket represents the mass flow rate into
+the flame.
 
-Ions and electrons are produced in equal amounts. An inhomogeneous electric field 
+Ions and electrons are produced in equal amounts. An inhomogeneous electrostatic field 
 spreads between collector and jet. The collector is a tube which is aligned in a 
 small distance above the jet. The collector is negatively charged with respect 
 to the jet and thus collects the positively charged ions, while the jet collects 
@@ -116,14 +120,101 @@ the electrons. This produces a small current which is amplified and converted to
 voltage in the detector electronics. Ions and electrons that have not been captured 
 recombine so that there remains a net zero charge. 
 
-It is well known that an FID will saturate at high analyte 
-concentrations. This saturation is caused by a space charge effect. When a massive 
-amount of ions is generated, they partially shield the electric field and slow 
-down the migration speed of the ions. So ions and electrons have more time to recombine and 
-the detector sensitivity decreases.
+It is well known that an FID will saturate at high analyte loadings. This saturation 
+is caused by a space charge effect. When a massive amount of ions is generated, 
+these ions screen the electrostatic field and thus slow down the migration speed 
+of the ions. Consequently, ions and electrons have more time to recombine and the  
+sensitivity of the detector decreases.
 
-Pressure primarily affects the flame geometry, but in a complicated way.
-![flame_geometry.jpg](./img/flame_geometry.jpeg)
+Pressure affects flame geometry, but in a complicated way. Flame speed, i.e. the 
+rate at which the flame front expands, decreases with increasing pressure. At the 
+same time flame stretch, which measures the rate at which the area of a flame 
+surface grows, increases. In simple words: As the pressure increases, flame height 
+increases and flame width decreases. 
+
+When the flame length increases, it is partly located inside the collector tube,
+where the electrostatic field strength and the local charge collection efficiency 
+are zero, cf. Fig. 1.
+
+Our measurements indicate that FID response typically changes a rate between -0.7% 
+and -0.8% per 10 hPa per 10 hPa of pressure increase. A rate of -1.0% would indicate that 
+response and pressure are inversely proportional.
+
+
+![Fig. 1: Cutaway diagram of an FID (Source: www.agilent.com)][Fig 1.]{width=100%}
+
+
+
+### Theory of the thermal conductivity detector
+
+Theory says that a TCD is concentration sensitive detector. The thermal conductivity 
+detector has its applications in gas analytics and process GC for the detection 
+of permanent gases and light hydrocarbons.
+
+According to van Es et al. [9] the output voltage V of a TCD is given as:
+
+$$ V = I R_0 \alpha x 
+       \left[ A - \frac{\lambda_1}{\lambda_2 B} \right] 
+       \left( T - T_w \right) 
+       \frac{1 + \alpha T}{1 + \alpha T_w}$$
+where:
+
+$I$: filament current
+
+$T$: filament temperature
+
+$T_w$: block temperature
+
+$R_0$: filament resistance at 0°C
+
+$\alpha$: temperature coefficient of the sample
+
+$x$: molar fraction of the sample
+
+$\lambda_1$: thermal conductivity of carrier gas
+
+$\lambda_2$: thermal conductivity of sample
+
+$A, B$: constants
+
+Van Es et al. [9] conclude: The thermal conductivity of carrier gas and component 
+are independent of pressure at least down to 0.1 bar. Consequently the TCD sensitivity 
+increases inversely proportional with pressure.
+
+The above equation suggests that the response of a TCD is inversely proportional to
+pressure. Our measurements typically show that the sensitivity of a TCD changes at
+a rate of about -0.5% per 10 hPa of pressure increase, which is only half of the
+expected rate.
+
+![Fig. 2: Cutaway drawing of the Agilent single cell TCD (Source: www.agilent.com)][Fig 2.]{width=100%}
+
+
+### Pressure effects on sample introduction
+
+Pressure is known to affect the response of an instrument when gaseous samples are 
+concerned: The sample amount is proportional to the pressure inside the sample 
+loop. Accordingly this applies to the amount of the analyte and the peak area. 
+
+![Fig. 3: Schematic of a gas sampling valve (Source: www.vici.com)][Fig 3.]{width=100%}
+
+Please note that pressure has a positive effect on sample amount while its effect 
+on detector response is a negative one. Injecting a gaseous sample at atmospheric 
+pressure somewhat counteracts the effect atmospheric pressure has on the respective 
+detector. 
+
+Split injection is a basic injection technique in gas chromatography. During a 
+split injection, a major part of the sample is vented from the inlet to the atmosphere while only 
+a minor part is introduced into the column. The split ratio is set by the user in 
+the analytical method. For the configuration of a S/SL inlet, see Fig. 4. With EPC
+split and column flows are not supposed to be dependent on atmospheric pressure.
+
+![Fig. 4: Schematic of a Split/Splitless Inlet (Source: www.agilent.com)][Fig 4.]{width=100%}
+
+### Pressure effect on the detector feed gases
+
+
+## Pressure effect on the column flow
+
 
 
 ## Statistical model
@@ -166,4 +257,12 @@ calculation of composition, International Organization for Standardization
 overlooked implications for fossil fuel combustion modeling, Progress in energy 
 and combustion science 34, 330-350 (2008)
 
+[9] van Es, A. J. J., Cramers, C. A. M. G., & Rijks, J. A., Detection limits of thermal conductivity and photoionization detectors in high speed narrow bore CGC, Journal of High Resolution Chromatography 12(5), 303-307 (1989)
 
+[Fig 1.]: https://www.agilent.com/cs/publishingimages/FID-HIW-Image-960x540.jpg
+
+[Fig 2.]: https://www.agilent.com/cs/publishingimages/TCD-HIW-Image-960x540.jpg
+
+[Fig 3.]: https://www.vici.com/support/images/app11.gif
+
+[Fig 4.]: https://www.agilent.com/cs/publishingimages/split-mode-flow-diagram-960x540.jpg
