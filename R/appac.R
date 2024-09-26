@@ -20,11 +20,11 @@ appac <- function(data,
                     min.data.points = 50
                   ),
                   appac.colnames = list(
-                    sample.col,
-                    peak.col,
-                    date.col,
-                    pressure.col,
-                    area.col
+                    sample.col = NA,
+                    peak.col = NA,
+                    date.col = NA,
+                    pressure.col = NA,
+                    area.col = NA
                   )) {
 
 
