@@ -9,7 +9,7 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: bzip2
-Imports: methods, stats, dplyr, data.table, Rbeast, VGAM, gridExtra,
+Imports: methods, stats, dplyr, data.table, Rbeast, VGAM, 
     ggplot2, ggpubr, patchwork, mathjaxr, magrittr, utils
 Suggests: knitr, testthat (>= 3.0.0)
 RdMacros: mathjaxr

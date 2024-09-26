@@ -1,15 +1,14 @@
 ---
 title: "The Effect of Ambient Pressure on the Response of FID and TCD"
-subtitle: "Technical Note"
 author: "Rüdiger Forster"
 description: |
-    Technical Note
+    Theory of the pressure effect.
 output:
     rmarkdown::html_vignette:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{Technical Note}
+  %\VignetteIndexEntry{Theory of the pressure effect}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 header-includes:
@@ -17,7 +16,6 @@ header-includes:
 ---
 
 ```{r setup, include = FALSE}
-options(rmarkdown.html_vignette.check_title = FALSE)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -181,9 +179,12 @@ $A, B$: constants
 
 Van Es et al. [9] conclude: The thermal conductivity of carrier gas and component 
 are independent of pressure at least down to 0.1 bar. Consequently the TCD sensitivity 
-increases inversely proportional with pressure. Our measurements, however, show 
-that the sensitivity of a TCD typically changes at a rate of about -0.5% per 10hPa 
-of pressure increase, which is only half of the expected rate.
+increases inversely proportional with pressure.
+
+The above equation suggests that the response of a TCD is inversely proportional to
+pressure. Our measurements typically show that the sensitivity of a TCD changes at
+a rate of about -0.5% per 10 hPa of pressure increase, which is only half of the
+expected rate.
 
 ![Fig. 2: Cutaway drawing of the Agilent single cell TCD (Source: www.agilent.com)][Fig 2.]{width=100%}
 
@@ -197,9 +198,8 @@ loop. Accordingly this applies to the amount of the analyte and the peak area.
 ![Fig. 3: Schematic of a gas sampling valve (Source: www.vici.com)][Fig 3.]{width=100%}
 
 Please note that pressure has a positive effect on sample amount while its effect 
-on detector response is a negative one. The rate of response change per pressure 
-change is +1.0% per 10hPa pressure increase. Injecting a gaseous sample at atmospheric 
-pressure counteracts the effect atmospheric pressure has on the respective 
+on detector response is a negative one. Injecting a gaseous sample at atmospheric 
+pressure somewhat counteracts the effect atmospheric pressure has on the respective 
 detector. 
 
 Split injection is a basic injection technique in gas chromatography. During a 
@@ -213,7 +213,8 @@ split and column flows are not supposed to be dependent on atmospheric pressure.
 ### Pressure effect on the detector feed gases
 
 
-### Pressure effect on the column flow
+## Pressure effect on the column flow
+
 
 
 ## Statistical model

@@ -1,15 +1,14 @@
 ---
-title: "Short introduction into the appac package"
-subtitle: "User Guide"
+title: "APPAC User Guide"
 author: "Rüdiger Forster"
 description: |
-    User Guide
+    Short introduction into the appac package.
 output:
     rmarkdown::html_vignette:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{User Guide}
+  %\VignetteIndexEntry{APPAC User Guide}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 header-includes:
@@ -17,7 +16,6 @@ header-includes:
 ---
 
 ```{r setup, include=FALSE}
-options(rmarkdown.html_vignette.check_title = FALSE)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -262,6 +260,21 @@ There must not be a visible trend or seasonality in any of the control charts,
 otherwise the composition of the control sample seems to be unstable.
 
 There is no detectable trend in the fitted data, so the drift may be validated.
+
+## Some internals of the appac function
+
+## Set up your own control experiments
+
+### Control samples
+Control samples must meet the following requirements:
+
+### Control measurements
+
+equal intervals
+
+## Further applications
+
+
 
 ## References
 
