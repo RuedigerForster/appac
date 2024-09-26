@@ -6,6 +6,10 @@
 # library(stats)
 # library(VGAM)
 
+# #############################################################
+# Erik made comment to see how working in github works. 
+###############################################################
+
 expand.grid.unique <- function(x, y, include.equals = FALSE) {
   x <- unique(x)
   y <- unique(y)

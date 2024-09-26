@@ -62,7 +62,7 @@ appac.colnames <- list(
 
 appac.control <- list(min.data.points = 5)
 
-x <- suppressWarnings(appac(df = PGC_TCD,
+x <- suppressWarnings(appac(data = PGC_TCD,
                             P.ref = P.ref,
                             appac.control = appac.control,
                             appac.colnames = appac.colnames))

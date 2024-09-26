@@ -8,6 +8,7 @@ import(mathjaxr, ggplot2, methods, utils)
 importFrom(stats, coefficients, cooks.distance, cor.test, cor, cov, density, 
            dnorm, lm, na.omit, predict, sd, vcov)
 importFrom(data.table, as.IDate)
+importFrom(gridExtra, grid.arrange)
 importFrom(Rbeast, beast123)
 importFrom(VGAM, cauchy, coefficients, vcov, vglm, uninormal)
 importFrom(dplyr, across, filter, full_join, group_by, left_join, mutate, n, ungroup, summarise, where)
