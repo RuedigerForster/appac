@@ -290,14 +290,14 @@ suppressWarnings(appac:::plot_local_fit(data = x, sample = s,
                  plot.residuals = TRUE, bins = 50))
 
 ```
-Fig. 1: Local fit of raw data showing severe signs of autocorrelation.
+Fig. 5: Local fit of raw data showing severe signs of autocorrelation.
 
 The autocorrelation function can also be calculated by the acf() function of the 
 stats package, see Fig. 2.
 ```{r calc_autocorrelation, echo = TRUE, fig.width=7.2, fig.height=3}
 acf(x@correction@samples[[s]]$raw.area[,p], pl=TRUE)
 ```
-Fig 2. Plot of the autocorrelation function for the above data set.
+Fig 6. Plot of the autocorrelation function for the above data set.
 
 
 
