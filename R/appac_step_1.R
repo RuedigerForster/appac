@@ -1,7 +1,7 @@
 
 appac_step_1 <- function(df, P.ref, appac.control) {
   #
-  # beast must receive an evenly spaced time series ???
+  # beast asks for an evenly spaced time series ???
   # Not done yet! Really necessary ??? No trend, no season
   #
   sample.name <- NULL
