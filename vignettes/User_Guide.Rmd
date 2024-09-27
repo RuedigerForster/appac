@@ -1,0 +1,270 @@
+---
+title: "Short introduction into the appac package"
+subtitle: "User Guide"
+author: "Rüdiger Forster"
+description: |
+    User Guide
+output:
+    rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{User Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+header-includes:
+  - \usepackage[subrefformat=simple]{subfig}
+---
+
+```{r setup, include=FALSE}
+options(rmarkdown.html_vignette.check_title = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+This document illustrates the usage of the appac package and also explains how to obtain your own data that can be processed with appac. For a comprehensive overview of the APPAC method and its applications, please refer to [1].
+
+The appac package features a main function, which is 
+
+`appac (data, P.ref, appac.control,  appac.colnames)`
+
+It is surrounded by several other functions (which are actually methods) that help to retrieve the input and the fitted data.
+
+The package uses the S4 class system. To familiarize yourself with S4 classes and methods, we recommend the section ‘The S4 object system’ from Hadley Wickham's excellent book ‘Advanced R’, which is fortunately available online [2].
+
+## Input to the appac function
+
+The input consists of a data frame `data`, a numeric value `P.ref`, a list `appac.control` and a list `appac.colnames`.
+
+The data frame must contain at least 5 columns, which represent the following information:
+
+* the name (character string) of the sample analyzed
+* the date (character string or class Date, IDate) at which the measurement was made
+* the name (character string) of the peak to which the measurement relates
+* the measured peak area (numeric value)
+* the measured atmospheric pressure (numeric value) which prevailed during the time the chromatogram was recorded
+* (optional) the retention time of the peak (numeric value)
+
+Each row of the data frame must represent a single peak. 
+
+Note:
+The user must decide in advance which peaks/components are to be evaluated; only these peaks may be included in the input data frame, or the data frame must be filtered accordingly before it is passed to the appac function. 
+
+Note:
+It is important that each of the predetermined peaks from each chromatogram is listed in the data frame. Peaks that have not been integrated or are not present in the sample must be reported as ‘NA’.
+
+It is important that report each of the pre-determined peaks from every chromatogram in the data frame. Peaks which have not been integrated or are absent in the sample must be reported as `NA`.
+
+The column headers must be named. The names of the column headers must be passed to the appac function through the list `appac.colnames`.
+
+`appac.colnames = list(sample.col, peak.col, date.col, pressure.col, area.col)`
+
+Other columns that may exist in the input data frame are discarded. The information passed to the appac function must relate to a single channel (i.e. detector) of a single instrument. If more than one instrument or channel is to be included in the data frame, following columns must be added and the data frame must be filtered accordingly:
+
+* the name (character string) of the Instrument on which the chromatographic analysis was performed
+* the name (character string) of the chromatographic channel to which the measured information relates
+
+`P.ref` is a fixed reference pressure to which the output of the appac function refers. `P.ref` can be set to an arbitrary value which is within the range of the atmospheric pressures of the data set; however, the means of the input data and the output data will then differ. It is therefore recommended to set P.ref to a value near the center of the pressure range. The `median` value is a good estimate.
+
+`appac.control` is a list of some parameters which control the workflow of the function. Currently, the list currently only one item: 
+
+* min.data.points: the minimum number of non-NA data points of a local fit to be considered a valid data point of the global fit, see also internals of the appac function.
+(The list may be expanded in future releases.)
+
+## Output of the appac function
+
+The output is an object of S4 class `Appac`. It consists of two elements: class `Drift` and class `Correction`. Class `Drift` contains the calculated drift factors for the data set, while class `Correction` holds the coefficients for the pressure correction function and the fitted data. The output can easily be inspected by the command `View(appac-object)`.
+
+The package provides a set of methods which allow the user to extract certain information from the output objects. These methods are called with the name of the respective object as their first argument.
+
+#### Results of the atmospheric pressure correction
+
+Note:
+As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If they do not comply with the conventions, these names are converted and a respective warning is issued. To be able to use one of these names in a method, the changed names must be used. (Maybe it is a good idea to provide a conversion function `checkNames` which does this conversion on occasion of a user call instead of doing it inside of a black box. Your opinions, please.)
+
+The atmospheric pressure correction function fits one parameter, coefficient $\kappa$. The following methods are related to the fitted value of $\kappa$ and return:
+
+* `coefficients(correction-object)`: the value of $\kappa$
+* `stdErrors(correction-object)`: the standard error of $\kappa$
+* `pValues(correction-object)`: the p-value of the fitted $\kappa$
+
+#### Results of the drift compensation
+
+A drift factor is calculated based on the residuals of atmospheric pressure correction function, which are common to all measured control samples. The drift factor is a function of the measured peak area in addition to the date.
+
+* `driftFactor(drift-object, date-vector, area-matrix)`: a data frame with the columns `date` and `drift.factor` is returned
+
+#### Input data
+
+The values of the input data are returned by the following methods. 
+
+* `dates(correction-object, sample-name)`: the date vector
+* `P(correction-object, sample-name)`: the atmospheric pressure vector
+* `rawAreas(correction-object, sample-name)`: a matrix of the measured peak areas of all components which belong to sample 'sample-name'
+
+#### Fitted areas
+
+* `correctedAreas(correction-object, sample-name)`: pressure corrected, but not drift compensated peak area values (matrix)
+* `compensatedRawAreas(correction-object, sample-name)`: drift compensated, but not pressure corrected peak area values (matrix)
+* `compensatedCorrectedAreas(correction-object, sample-name)`: pressure corrected and drift compensated peak area values (matrix)
+* `expectedAreas(correction-object, sample-name)`: expected area values (matrix). Useful to calculate the residual peak areas.
+* `residualAreas(correction-object, sample-name, type)`: "raw.area", "corrected.area", "compensated.corrected.area" ???
+
+Note:
+Residual peak areas of type = "compensated.corrected.area" are referenced to area.ref, which is the expected peak area of a component (of a sample) at `P.ref`. Residual peak areas of `type = "raw.area"` and  `type = "corrected.area"` are related to the expected peak areas at pressure `P` of each peak.
+
+#### Variances, covariances and correlations
+
+* `variance(correction-object, sample-name, type)`:
+* `covMatrix(correction-object, sample-name, type)`:
+* `corMatrix(correction-object, sample-name, type)`:
+
+## An example
+
+Let us use the data set `packed_FID` for this example.
+
+```{r load_data, echo = TRUE}
+## load the package
+library(appac)
+
+## load the data set
+data("packed_FID")
+
+## explore the column names of the data set
+str(packed_FID)
+
+## get the number of items in the data set
+nrow(packed_FID)
+```
+
+This is a large data set.
+
+Now, we need to define the other arguments of the appac function:
+
+```{r arguments, echo = TRUE}
+## P.ref as the median of the pressure vector
+## use argument na.rm = TRUE in case the pressure vector includes NA
+P.ref <- median(PLOT_FID$air.pressure, na.rm = TRUE)
+
+## define appac.control
+## because packed_FID is a long data set, we may apply a value of 100 to min.data.points
+## without expecting a negative impact on the results
+## you may also try other values
+appac.control <- list(min.data.points = 100)
+
+## define the columns names
+## use the output of str(packed_FID) to identify the columns
+appac.colnames <- list(
+  sample.col    = "sample.name",
+  peak.col      = "peak.name",
+  date.col      = "injection.date",
+  pressure.col  = "air.pressure",
+  area.col      = "raw.area"
+)
+
+```
+
+and call the function:
+
+```{r call_appac, echo = TRUE}
+## call the appac function
+## the output is stored in the variable x
+## please check the warnings carefully
+x <- appac(data = packed_FID, 
+           P.ref = P.ref, 
+           appac.control = appac.control, 
+           appac.colnames = appac.colnames)
+```
+
+The function has thrown four warnings, the first two of which were to be expected. 
+For the moment, let us ignore these warnings and proceed.
+
+Instead, let us have a look at the plotted output of the global fit.
+
+```{r plot_global_fit, echo=TRUE, fig.width=7.2, fig.height=4}
+## define the colors list
+colors <- list(highlight_color="orange", lowlight_color="black", 
+               line_color="darkblue", fill_color="lightblue")
+
+## plot the output of the appac function
+## the output has been stored in variable x
+plotGlobalFit(object=x, colors=colors)
+```
+
+At first sight, this result seems sensible in spite of the warnings thrown by the vglm.fitter. Let us look at 
+the output values.
+
+```{r output_values, echo=TRUE}
+## get the pressure correction coefficient 'kappa'
+coefficients(x@correction)
+## get the standard error of 'kappa'
+stdErrors(x@correction)
+## get the p-value of the fit
+pValues(x@correction)
+```
+
+There is nothing wrong with this. The p-value is sufficiently small, so that the fit
+seems to be justified. The relative standard uncertainty of $\kappa$ amounts to 
+`r sprintf("%.2f", abs(100*stdErrors(x@correction)/coefficients(x@correction)))`%,
+which lies in the expected range. The warnings of the vglm.fitter can therefore 
+be safely ignored.
+
+Now, let us view the plots of the local fits.
+```{r plot_local_fits, echo=TRUE, fig.width=7.2, fig.height=8}
+## define the colors list
+colors <- list(highlight_color="red", lowlight_color="darkgrey", 
+               line_color="darkblue", fill_color="lightblue")
+
+## get the sample names
+samples <- names(x@correction@samples)
+
+for (s in samples) {
+  ## get the peak names of sample s
+  peaks <- colnames(x@correction@samples[[s]]$raw.area)
+  gridExtra::grid.arrange(grobs = lapply(peaks, function(p) suppressWarnings(plotLocalFit(object=x, sample=s, peak=p, colors=colors))), ncol=2)
+}
+```
+
+What to look out for in these plots?
+
+* a skewed or even multimodal distribution of residuals or the fitted data points (red).
+The raw data points (grey) exhibit a multimodal distribution of the data points and 
+the residuals, which manifests itself in a parallel shift of the data points. A 
+flawless fit must compensate for this.
+* the residuals must be normal distributed
+* the distribution of the residuals must be centered at 0
+* a sufficiently small number (< 5%) of obvious outliers. Extreme outliers
+may have got lost in the plot due to the scaling.
+
+If these conditions are fulfilled, the atmospheric pressure fit may be validated.
+(In a future release of the package, an automated validation feature for both 
+Correction and Drift will be implemented.)
+
+Finally, we will have a look at the control charts.
+
+```{r plot_control_charts, echo=TRUE, fig.width=7.2, fig.height=8}
+## define the colors list
+colors <- list(highlight_color="yellow", lowlight_color="darkgrey", 
+               line_color="darkblue", fill_color="lightblue")
+
+## get the sample names
+samples <- names(x@correction@samples)
+
+for (s in samples) {
+  ## get the peak names of sample s
+  peaks <- colnames(x@correction@samples[[s]]$raw.area)
+  gridExtra::grid.arrange(grobs = lapply(peaks, function(p) suppressWarnings(plotControlChart(object=x, sample=s, peak=p, colors=colors))), ncol=2)
+}
+```
+
+In order to validate the calculated drift, please check for a trend in the fitted data.
+There must not be a visible trend or seasonality in any of the control charts, 
+otherwise the composition of the control sample seems to be unstable.
+
+There is no detectable trend in the fitted data, so the drift may be validated.
+
+## References
+
+[1] Forster, R. et al., to be published
+
+[2] <http://adv-r.had.co.nz/S4.html>
