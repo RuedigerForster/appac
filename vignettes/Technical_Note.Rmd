@@ -9,11 +9,11 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{Technical Note}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\usepackage[utf8]{inputenc}
+    %\VignetteIndexEntry{Technical Note}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\usepackage[utf8]{inputenc}
 header-includes:
-  - \usepackage[subrefformat=simple]{subfig}
+    \usepackage[subrefformat=simple]{subfig}
 ---
 
 ```{r setup, include = FALSE}
@@ -24,9 +24,20 @@ knitr::opts_chunk$set(
 )
 ```
 
+
 ## Summary
 
 
+## Glossary
+
+### Abbreviations
+* EPC: electronic pressure control, electronic pneumatic controller
+* FID: flame ionization detector
+* GC:  gas chromatograph, gas chromatography
+* S/SL: split/splitless; type of a GC injector
+* TCD: thermal condctivity detector
+
+### Symbols
 
 
 ## Introduction
@@ -36,35 +47,28 @@ in 1969 [1]. The authors claim that ionization efficiency is strongly dependent 
 and that normal changes in atmospheric pressure can result in changes to as much
 as ±5% of the value measured at 1 atm.
 
-US patent 4,512,181 [2] describes a procedure for correcting the impact that atmospheric 
-pressure variations have on the output of a chromatographic analyzer. This correction 
-should be determined in conjunction with the calibration of the instrument. The authors 
-of the patent quantificate the pressure effect as follows:
+US patent 4,512,181 [2] describes a procedure to compensate the impact that atmospheric 
+pressure variations have on the output of a chromatographic analyzer. The compensation 
+coefficient $M$ should be determined in conjunction with the calibration of the instrument. The authors 
+of the patent quantificate the pressure effect as
 
-$$ \frac {C_m} {C_a} = 1 + M \left( \frac{P_a}{P_c} - 1 \right) $$
-where:
-
-$P_a$:  atmospheric pressure at the time the sample was measured
-
-$P_c$:  atmospheric pressure at calibration time
-
-$C_m$:  measured analyzer output at pressure $P_a$
-
-$C_a$:  analyzer output as if the sample had been measured at $P_c$
-
+$$ \frac {C_m} {C_a} = 1 + M \left( \frac{P_a}{P_c} - 1 \right) \tag{1}$$
+where  
+$P_a$:  atmospheric pressure at the time the sample was measured  
+$P_c$:  atmospheric pressure at calibration time  
+$C_m$:  measured analyzer output at pressure $P_a$  
+$C_a$:  analyzer output as if the sample had been measured at $P_c$  
 $M$:    the slope of plot $\frac{C_m}{C_a}$ as a function of $\frac{P_a}{P_c}$
 
-The correction of the detector response (peak area or peak height) of a peak is given as follows:
+The correction of the detector response (peak area or peak height) of a peak is given as 
 
-$$ Y^{\#} = \frac{Y}{1 + M \left( \frac{P_a}{P_c} - 1 \right)} $$
-where:
-
-$Y^{\#}$: corrected analyzer output 
-
-$Y$:   measured analyzer output
+$$ Y^{\#} = \frac{Y}{1 + M \left( \frac{P_a}{P_c} - 1 \right)} \tag{2}$$
+where  
+$Y^{\#}$:  corrected analyzer output  
+$Y$:  measured analyzer output  
 
 The pressure artifact had caught the attention of an instrument manufacturer who 
-invented electronic pressure control (EPC), which tries to remedy the problem by  
+invented electronic pressure control (EPC), which tries to remedy the problem by 
 measuring atmospheric pressure and stabilizing pressures and flows of an instrument accordingly
 [3]. Despite these efforts the manufacturer still specifies an area precision at 
 better than 1% RSD [4]. This figure is in accordance with the long-run variances 
@@ -73,7 +77,7 @@ obtained by our experiments without applying a correction.
 The pressure artifact seems to have been largely overlooked in the literature since then. 
 Barwick does not mention atmospheric pressure as a source of uncertainty in flame 
 ionization detection in her excellent and comprehensive review [5]. Nor does this 
-topic  appear in a standard for the testing of flame ionization detectors [6]. 
+topic appear in a standard for the testing of flame ionization detectors [6]. 
 A pressure influence on FID response is even expressly rejected in another 
 standard [7].
 
@@ -86,61 +90,54 @@ hydrogen-air flame forms its core. Any organic compound that reaches the flame p
 in amounts which are almost perfectly proportional to the mass of carbon atoms reaching the flame [8].
 
 Technically speaking, the FID measures the rate at which these ions are produced 
-and subsequently collected. Its output voltage V is expected to be proportional 
+and subsequently collected. Its output voltage $V$ is expected to be proportional 
 to the ion formation rate $\dot{n}$ and the charge collection efficiency $\eta_c$.
 
-$$V \propto \eta_c \dot{n} = \eta_c(P, \theta)   \left[] r_{br}(\theta) \times \frac{x_CM_C}{M_G} \right] \left[ F_d \times \frac{P M_G}{RT} \right]$$
-where:
+$$V \propto \eta_c \dot{n} = \eta_c(P, \theta)   \left[ r_{br}(\theta) \times \frac{x_CM_C}{M_G} \right] \left[ F_d \times \frac{P M_G}{RT} \right] \tag{3}$$
 
-$r_{br}$: branching ratio; total ion formation rate divided by the overall reaction (burning) rate
-
-$\theta$: adiabatic flame temperature
-
-$x_C$: mole fraction of carbon in the feed gas
-
-$F_d$: detector feed gas flow rate (fuel gas + air + makeup gas + column effluent)
-
-$M_G$: average molar mass of the detector feed gas
-
-$M_C$: molar mass of carbon
-
-$P_d$: detector pressure
-
-$R$: gas constant
-
-$T$: temperature
+where  
+$r_{br}$:  branching ratio; total ion formation rate divided by the overall reaction (burning) rate  
+$\theta$:  adiabatic flame temperature  
+$x_C$:  mole fraction of carbon in the feed gas  
+$F_d$:  detector feed gas flow rate (fuel gas + air + makeup gas + column effluent)  
+$M_G$:  average molar mass of the detector feed gas  
+$M_C$:  molar mass of carbon  
+$P_d$:  atmospheric (= detector) pressure  
+$R$:  gas constant  
+$T$:  temperature of the feed gas
 
 The expression in the left square bracket gives the mass ratio of ions formed in the burning 
-feed gas, while the expression in the right square bracket represents the mass flow rate into
-the flame.
+gas, while the expression in the right square bracket represents the mass flow rate into
+the flame. The equation suggests that the mass flow rate into the detector is proportional 
+to pressure, is the flow rates are not compensated by an EPC.
 
-Ions and electrons are produced in equal amounts. An inhomogeneous electrostatic field 
-spreads between collector and jet. The collector is a tube which is aligned in a 
-small distance above the jet. The collector is negatively charged with respect 
+Ions and electrons are equally produced in the flame. An inhomogeneous electrostatic field 
+spreads between collector and jet. The collector is a tube which is aligned at a 
+small distance above the jet, see Fig. 1. The collector is negatively charged with respect 
 to the jet and thus collects the positively charged ions, while the jet collects 
-the electrons. This produces a small current which is amplified and converted to 
-voltage in the detector electronics. Ions and electrons that have not been captured 
+the electrons. The movement of charges produces a small current which is amplified and converted to 
+a voltage in the detector electronics. Ions and electrons that have not been captured 
 recombine so that there remains a net zero charge. 
 
-It is well known that an FID will saturate at high analyte loadings. This saturation 
+It is well known that an FID will saturate at high analyte loading. This saturation 
 is caused by a space charge effect. When a massive amount of ions is generated, 
 these ions screen the electrostatic field and thus slow down the migration speed 
-of the ions. Consequently, ions and electrons have more time to recombine and the  
+of the ions. Consequently, ions and electrons have more time to recombine and the 
 sensitivity of the detector decreases.
 
-Pressure affects flame geometry, but in a complicated way. Flame speed, i.e. the 
+Pressure also affects flame geometry, but in a complicated way. Flame speed, i.e. the 
 rate at which the flame front expands, decreases with increasing pressure. At the 
 same time flame stretch, which measures the rate at which the area of a flame 
 surface grows, increases. In simple words: As the pressure increases, flame height 
 increases and flame width decreases. 
 
-When the flame length increases, it is partly located inside the collector tube,
+When the flame length increases, the flame is partly located inside the collector tube,
 where the electrostatic field strength and the local charge collection efficiency 
 are zero, cf. Fig. 1.
 
-Our measurements indicate that FID response typically changes a rate between -0.7% 
-and -0.8% per 10 hPa per 10 hPa of pressure increase. A rate of -1.0% would indicate that 
-detector response and pressure are inversely proportional.
+Our measurements indicate that FID response typically changes at a rate between -0.7% 
+and -0.8% per 10 hPa per 10 hPa of pressure increase. (A rate of -1.0% would indicate that 
+detector response and pressure are inversely proportional.)
 
 
 ![Fig. 1: Cutaway diagram of an FID (Source: www.agilent.com)][Fig 1.]{width=100%}
@@ -149,83 +146,164 @@ detector response and pressure are inversely proportional.
 
 ### Theory of the thermal conductivity detector
 
-Theory says that a TCD is concentration sensitive detector. The thermal conductivity 
-detector has its applications in gas analytics and process GC for the detection 
+Theory says that the thermal conductivity detector is a concentration sensitive detector. 
+The TCD has its application in gas analytics and process GC where it is used for the detection 
 of permanent gases and light hydrocarbons.
 
-According to van Es et al. [9] the output voltage V of a TCD is given as:
+According to van Es et al. [9] the output voltage $V$ of a TCD is given as
 
 $$ V = I R_0 \alpha x 
        \left[ A - \frac{\lambda_1}{\lambda_2 B} \right] 
        \left( T - T_w \right) 
-       \frac{1 + \alpha T}{1 + \alpha T_w}$$
-where:
-
-$I$: filament current
-
-$T$: filament temperature
-
-$T_w$: block temperature
-
-$R_0$: filament resistance at 0°C
-
-$\alpha$: temperature coefficient of the sample
-
-$x$: molar fraction of the sample
-
-$\lambda_1$: thermal conductivity of carrier gas
-
-$\lambda_2$: thermal conductivity of sample
-
-$A, B$: constants
+       \frac{1 + \alpha T}{1 + \alpha T_w} \tag{4}$$
+where  
+$I$:  filament current  
+$T$:  filament temperature  
+$T_w$:  block temperature  
+$R_0$:  filament resistance at 0°C  
+$\alpha$:  temperature coefficient of the sample  
+$x$:  molar fraction of the sample  
+$\lambda_1$:  thermal conductivity of carrier gas  
+$\lambda_2$:  thermal conductivity of sample  
+$A, B$:  constants  
 
 Van Es et al. [9] conclude: The thermal conductivity of carrier gas and component 
 are independent of pressure at least down to 0.1 bar. Consequently the TCD sensitivity 
-increases inversely proportional with pressure. Our measurements, however, show 
-that the sensitivity of a TCD typically changes at a rate of about -0.5% per 10hPa 
-of pressure increase, which is only half of the expected rate.
+increases inversely proportional with pressure. 
+
+Our measurements, however, show that the sensitivity of a TCD typically changes 
+at a rate of about -0.4% to -0.5% per 10hPa of pressure increase, which is only 
+half of the projected rate.
 
 ![Fig. 2: Cutaway drawing of the Agilent single cell TCD (Source: www.agilent.com)][Fig 2.]{width=100%}
 
 
-### Pressure effects on sample introduction
+### Pressure effects during sample introduction
 
 Pressure is known to affect the response of an instrument when gaseous samples are 
 concerned: The sample amount is proportional to the pressure inside the sample 
-loop. Accordingly this applies to the amount of the analyte and the peak area. 
+loop. Accordingly this applies to the amount of the analyte and the measured peak area. 
 
 ![Fig. 3: Schematic of a gas sampling valve (Source: www.vici.com)][Fig 3.]{width=100%}
 
 Please note that pressure has a positive effect on sample amount while its effect 
-on detector response is a negative one. The rate of response change per pressure 
-change is +1.0% per 10hPa pressure increase. Injecting a gaseous sample at atmospheric 
+on detector response is a negative one. Its rate of response change per pressure 
+change is +1.0% per 10hPa pressure increase. So injecting a gaseous sample at atmospheric 
 pressure counteracts the effect atmospheric pressure has on the respective 
 detector. 
 
-Split injection is a basic injection technique in gas chromatography. During a 
-split injection, a major part of the sample is vented from the inlet to the atmosphere while only 
-a minor part is introduced into the column. The split ratio is set by the user in 
-the analytical method. For the configuration of a S/SL inlet, see Fig. 4. With EPC
-split and column flows are not supposed to be dependent on atmospheric pressure.
+### Electronic pressure / flow control
+
+Electronic pneumatic controllers [3, 10] have been replacing manual pneumatic modules since
+the mid-1990s. EPC modules are easy to operate and guarantee stable gas flows regardless of
+atmospheric pressure. The prime objective of its inventors was to achieve better retention
+time stability [3].
+
+Fig. 4 illustrates the workings of EPC on a S/SL inlet in split mode. Please follow 
+the explanations given in [10]. During a split injection, a major part of the sample 
+is vented from the inlet to the atmosphere while only a minor part is introduced 
+into the column. The split ratio is set by the user in the analytical method. The
+firmware of the instruments calculates the setpoints of the pressure sensors in 
+order to obtain the required split, septum purge and column flow rates. Due to the
+calculation these are supposed to be independent of atmospheric pressure and the
+split ratio is held constant.
+
+The above also applies to the detector feed gases.
 
 ![Fig. 4: Schematic of a Split/Splitless Inlet (Source: www.agilent.com)][Fig 4.]{width=100%}
 
-### Pressure effect on the detector feed gases
+## Error and correction model
+
+The appac package features the error model
+
+$$ Y = \widehat{Y} \left( 1 + \kappa(P - P_{ref}) \right) \times \delta(\widehat{Y}, d) + \epsilon \tag{5}$$
+where  
+$Y$:  measured peak area  
+$\widehat{Y}$:  true value of peak area  
+$\kappa$:  atmospheric pressure correction coefficient  
+$P$:  measured atmospheric pressure  
+$P_{ref}$:  reference pressure  
+$\delta(\widehat{Y}, d)$:  drift factor  
+$\epsilon$:  statistical error  
+
+The corresponding correction model follows as
+
+$$ Y^\# = \frac{Y} {\delta(\widehat{Y}, d) \times \left( 1 + \kappa(P - P_{ref}) \right)}  \tag{6} $$
+
+where  
+$Y^\#$:  corrected peak area
+
+Equation (6) resembles equation (2) if the drift factor $\delta(\widehat{Y}, d)$ 
+is disregarded. 
+
+$$ Y^\# \approx \frac{Y} { 1 + \kappa(P - P_{ref}) } \tag{7};  \kappa \equiv \frac{M}{P_{ref}} $$
+
+Since we wanted the correction to be independent of a calibration, we applied the 
+correction to measurements of control samples alone. A fit according to (7) is a 
+naive fit, because it neglects instrumental artifacts such as baseline shift. 
+
+The naive fit is a three-step process:
+
+* First determine a reference pressure $P_{ref}$ that lies in the centre of the 
+data sets.  
+* For each peak of each control sample fit peak area $Y$ vs atmospheric pressure $P$ to 
+obtain the slope $dY/dP$ of the fitted line and the expected peak area $Y_{ref}$ 
+at $P_{ref}$. We will call this a local fit.  
+* Then fit $dY/dX$ vs $Y_{ref}$ of all local fits. We will call this the global fit. 
+The slope of this fit can be identified as $\kappa$.
+
+A naive fit is applicable to short time periods, where bias or trend cannot be 
+observed in the data. These are caused by instrumental artifacts and lead to a 
+time-dependent bias in the data. This bias in return induces a high degree of 
+autocorrelation in the measurements series. The autocorrelation in the data must be
+removed before an attempt can be made to fit the pressure correction for longer 
+periods of time.
+
+Autocorrelation can be identified in a plot of a local fit. It may be visible as a 
+heavy-tailed or skewed distribution of the residuals, in extreme cases several 
+modes will appear, see Fig. 1.
+
+```{r show_autocorrelation, echo = TRUE, fig.width=7.2, fig.height=6}
+library(appac)
+data("packed_FID")
+P.ref <- median(packed_FID$air.pressure, na.rm = TRUE)
+appac.colnames <- list(
+  sample.col    = "sample.name",
+  peak.col      = "peak.name",
+  date.col      = "injection.date",
+  pressure.col  = "air.pressure",
+  area.col      = "raw.area"
+)
+appac.control <- list(min.data.points = 50)
+x <- suppressWarnings(appac(data = packed_FID, 
+           P.ref = P.ref, 
+           appac.control = appac.control, 
+           appac.colnames = appac.colnames))
+
+s <- "KGM.11D.4"; p <- "C3H8"
+colors <- list(highlight_color="black", lowlight_color="darkgrey", 
+               line_color="darkblue", fill_color="lightblue")
+
+suppressWarnings(appac:::plot_local_fit(data = x, sample = s,
+                 peak = p, coefs = coefficients(x),
+                 colors = colors, show.compensated.areas = FALSE,
+                 plot.residuals = TRUE, bins = 50))
+
+```
+Fig. 1: Local fit of raw data showing severe signs of autocorrelation.
+
+The autocorrelation function can also be calculated by the acf() function of the 
+stats package, see Fig. 2.
+```{r calc_autocorrelation, echo = TRUE, fig.width=7.2, fig.height=3}
+acf(x@correction@samples[[s]]$raw.area[,p], pl=TRUE)
+```
+Fig 2. Plot of the autocorrelation function for the above data set.
 
 
-### Pressure effect on the column flow
 
 
-## Statistical model
 
-Although this correction method is identical to the one proposed here, it was of 
-limited practical value and to the author's knowledge has never been commercialized.
-This solution is only applicable for short time periods, because the impacted of
-atmospheric pressure on the analyzer response is partially masked by other artifacts 
-generated by the instrument itself, such as bias, trend and drift.
 
-The objective of our approach is to quantitatively separate these artifacts from 
-each other and to compensate for each one individually.
 
 
 ## References
@@ -242,7 +320,7 @@ apparatus, US Pentent 5,476,000 (1995)
 [4] The importance of area and retention time precision in gas chromatography, Technical
 Note, Agilent Technologies (2005)
 
-[5] Barwick, V. J., Sources of uncertainty in gas chromatography and high-performance 
+[5] Barwick, V. J., Sources of uncertainty in gas chromatography and high-performance 
 liquid chromatograph, J. Chromatogr. A , 849, 13-33 (1999)
 
 [6] ASTM Standard E594-96 (2019), Standard practice for testing flame ionization detectors 
@@ -257,6 +335,9 @@ overlooked implications for fossil fuel combustion modeling, Progress in energy
 and combustion science 34, 330-350 (2008)
 
 [9] van Es, A. J. J., Cramers, C. A. M. G., & Rijks, J. A., Detection limits of thermal conductivity and photoionization detectors in high speed narrow bore CGC, Journal of High Resolution Chromatography 12(5), 303-307 (1989)
+
+[10] Taylor, T., Electronic flow and pressure control in gas chromatography: Opening 
+the lid of the black box!, LCGC international 17(11), 24-28 (2021), <https://www.chromatographyonline.com/view/electronic-flow-and-pressure-control-in-gas-chromatography-opening-the-lid-of-the-black-box-
 
 [Fig 1.]: https://www.agilent.com/cs/publishingimages/FID-HIW-Image-960x540.jpg
 

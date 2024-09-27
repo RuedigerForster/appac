@@ -22,13 +22,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Introduction
-This document illustrates the usage of the appac package and also explains how to obtain your own data that can be processed with appac. For a comprehensive overview of the APPAC method and its applications, please refer to [1].
+This document illustrates the usage of the appac package. For a comprehensive overview of the APPAC method and its applications, please refer to [1].
 
-The appac package features a main function, which is 
+The appac package features a main function, which is:
 
 `appac (data, P.ref, appac.control,  appac.colnames)`
 
-It is surrounded by several other functions (which are actually methods) that help to retrieve the input and the fitted data.
+It is surrounded by several other functions (which are actually methods) that help to retrieve the input and the fitted (output) data.
 
 The package uses the S4 class system. To familiarize yourself with S4 classes and methods, we recommend the section ‘The S4 object system’ from Hadley Wickham's excellent book ‘Advanced R’, which is fortunately available online [2].
 
