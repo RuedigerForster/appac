@@ -6,6 +6,6 @@
 
 * added more examples, added a vignette
 
-# appac 0.1.2
+# appac 0.1.3
 
 * added vignette on theory

@@ -366,7 +366,7 @@ $$Y \sim P \tag{9}$$
 like in the naive fit can then be applied to each of the episodes individually. 
 A quadratic global fit of 
 
-$$dY/dP \sim 0 + Y_{ref} + Y_{ref}^2 \tag{10}$$ 
+$$dY/dP \sim 0 + Y_{ref} + Y_{ref}^2 \tag{10a}$$ 
 
 follows which includes all results of the local fits. 
 
@@ -405,7 +405,10 @@ thus obtained is not menaningful for predicting the drift of other samples.
 In the next step the drift coefficients are applied to the raw peak areas, and compensated
 raw areas $Y_{raw,comp}$ are obtained. 
 
-Now $Y_{raw,comp}$ is subjected to a pressure fit according to eq. (9) and (10).
+Now $Y_{raw,comp}$ is subjected to a pressure fit according to eq. (9) and 
+
+$$dY/dP \sim 0 + Y_{ref} \tag{10b}$$ 
+
 Using the newly obtained value of $\kappa$, the raw areas are corrected to eq. (7) 
 again and the drift is recalculated according to eq. (13) and (14). Repeatedly, 
 corrected and compensated corrected are calculated with raw areas as the input.
