@@ -47,11 +47,12 @@ The data frame must contain at least 5 columns, which represent the following in
 
 Each row of the data frame must represent a single peak. 
 
-Note:
-The user must decide in advance which peaks/components are to be evaluated; only these peaks may be included in the input data frame, or the data frame must be filtered accordingly before it is passed to the appac function. 
 
-Note:
+> **Note:**  
+The user must decide in advance which peaks/components are to be evaluated; only these peaks may be included in the input data frame. Otherwise the data frame must be filtered accordingly before it is passed to the appac function. 
+
 It is important that each of the predetermined peaks from each chromatogram is listed in the data frame. Peaks that have not been integrated or are not present in the sample must be reported as ‘NA’.
+
 
 It is important that report each of the pre-determined peaks from every chromatogram in the data frame. Peaks which have not been integrated or are absent in the sample must be reported as `NA`.
 
@@ -79,8 +80,9 @@ The package provides a set of methods which allow the user to extract certain in
 
 #### Results of the atmospheric pressure correction
 
-Note:
-As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If they do not comply with the conventions, these names are converted and a respective warning is issued. To be able to use one of these names in a method, the changed names must be used. (Maybe it is a good idea to provide a conversion function `checkNames` which does this conversion on occasion of a user call instead of doing it inside of a black box. Your opinions, please.)
+> **Note:**  
+As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If these names do not comply with the conventions, they are converted to compliant names and a respective warning is issued. To be able to use one of these names in a method, the changed names must be used. (Maybe it is a good idea to provide a conversion function `checkNames` which does this conversion on occasion of a user call instead of doing it inside of a black box. Your opinions, please.)
+
 
 The atmospheric pressure correction function fits one parameter, coefficient $\kappa$. The following methods are related to the fitted value of $\kappa$ and return:
 
@@ -108,10 +110,12 @@ The values of the input data are returned by the following methods.
 * `compensatedRawAreas(correction-object, sample-name)`: drift compensated, but not pressure corrected peak area values (matrix)
 * `compensatedCorrectedAreas(correction-object, sample-name)`: pressure corrected and drift compensated peak area values (matrix)
 * `expectedAreas(correction-object, sample-name)`: expected area values (matrix). Useful to calculate the residual peak areas.
-* `residualAreas(correction-object, sample-name, type)`: "raw.area", "corrected.area", "compensated.corrected.area" ???
+* `residualAreas(correction-object, sample-name, type)`: "raw.area", "corrected.area", "compensated.corrected.area" 
+* ...
 
-Note:
+> **Note:**  
 Residual peak areas of type = "compensated.corrected.area" are referenced to area.ref, which is the expected peak area of a component (of a sample) at `P.ref`. Residual peak areas of `type = "raw.area"` and  `type = "corrected.area"` are related to the expected peak areas at pressure `P` of each peak.
+
 
 #### Variances, covariances and correlations
 

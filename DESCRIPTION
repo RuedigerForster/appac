@@ -1,7 +1,7 @@
 Package: appac
 Type: Package
 Title: Atmospheric Pressure Peak Area Correction
-Version: 0.1.2
+Version: 0.1.3
 Author: Ruediger Forster <ruediger.forster@gmx.net> [aut, cre]
 Maintainer: Ruediger Forster <ruediger.forster@gmx.net>
 Description: Correct the ambient pressure effect on the peak areas of GC/FID and GC/TCD chromatograms.

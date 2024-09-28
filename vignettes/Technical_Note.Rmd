@@ -9,11 +9,11 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-    %\VignetteIndexEntry{Technical Note}
-    %\VignetteEngine{knitr::rmarkdown}
-    %\usepackage[utf8]{inputenc}
+  %\VignetteIndexEntry{Technical Note}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
 header-includes:
-    \usepackage[subrefformat=simple]{subfig}
+  - \usepackage[subrefformat=simple]{subfig}
 ---
 
 ```{r setup, include = FALSE}
@@ -27,18 +27,61 @@ knitr::opts_chunk$set(
 
 ## Summary
 
+Presented here is an expert package with the objective of removing the effect that 
+atmospheric pressure has on the response of a flame ionization detector (FID) or a
+thermal conductivity detector (TCD) in gas chromatography. Since the artifact generated 
+by atmospheric pressure is diluted by other artifacts such as baseline shift or 
+drift which causes bias in the data, the code negotiates the experimental errors 
+between a drift object and a correction object. This vignette describes the theoretical
+background and gives insight into the algorithm deployed.
 
 ## Glossary
 
 ### Abbreviations
-* EPC: electronic pressure control, electronic pneumatic controller
+* EPC: electronic pressure control; electronic pneumatic controller
 * FID: flame ionization detector
-* GC:  gas chromatograph, gas chromatography
+* GC:  gas chromatograph; gas chromatography
 * S/SL: split/splitless; type of a GC injector
 * TCD: thermal condctivity detector
 
 ### Symbols
-
+$Y$:  measured analyzer output; here referred to as peak area  
+$\widehat{Y}$:  true value of peak area  
+$Y^\#$:  corrected peak area  
+$P$:  measured atmospheric pressure  
+$dY/dP$: slope of the fit of $Y \sim P$  
+$P_{ref}$:  reference pressure  
+$Y_{ref}(episode)$: the expected peak area at reference pressure of an episode  
+$\overline{Y}_{corr}$: the mean of the pressure corrected areas of the full data set  
+$\kappa$:  atmospheric pressure correction coefficient  
+$\delta(Y, d)$:  drift factor  
+$\epsilon$:  statistical error  
+$P_a$:  atmospheric pressure at the time the sample was measured  
+$P_c$:  atmospheric pressure at calibration time  
+$C_m$:  measured analyzer output at pressure $P_a$  
+$C_a$:  analyzer output as if the sample had been measured at $P_c$  
+$M$:    pressure compensation coefficient according to Ayers  
+$r_{br}$:  branching ratio; total ion formation rate divided by the overall reaction (burning) rate  
+$\theta$:  adiabatic flame temperature  
+$x_C$:  mole fraction of carbon in the feed gas  
+$F_d$:  detector feed gas flow rate (fuel gas + air + makeup gas + column effluent)  
+$M_G$:  average molar mass of the detector feed gas  
+$M_C$:  molar mass of carbon  
+$P_d$:  atmospheric (= detector) pressure  
+$R$:  gas constant  
+$T$:  temperature of the feed gas  
+$\dot{n}$:  ion formation rate  
+$\eta_c$: charge collection efficiency  
+$V$: output voltage of the detector  
+$I$:  filament current  
+$T$:  filament temperature  
+$T_w$:  block temperature  
+$R_0$:  filament resistance at 0°C  
+$\alpha$:  temperature coefficient of the sample  
+$x$:  molar fraction of the sample  
+$\lambda_1$:  thermal conductivity of carrier gas  
+$\lambda_2$:  thermal conductivity of sample  
+$A, B$:  constants  
 
 ## Introduction
 
@@ -47,32 +90,29 @@ in 1969 [1]. The authors claim that ionization efficiency is strongly dependent 
 and that normal changes in atmospheric pressure can result in changes to as much
 as ±5% of the value measured at 1 atm.
 
-US patent 4,512,181 [2] describes a procedure to compensate the impact that atmospheric 
-pressure variations have on the output of a chromatographic analyzer. The compensation 
-coefficient $M$ should be determined in conjunction with the calibration of the instrument. The authors 
-of the patent quantificate the pressure effect as
+US patent 4,512,181 [2] describes a procedure how to compensate the impact that atmospheric 
+pressure variations have on the output of a gas chromatographic analyzer. They introduce a compensation 
+coefficient $M$ which should be determined in conjunction with the calibration of the instrument. The authors 
+quantificate the pressure effect as
 
 $$ \frac {C_m} {C_a} = 1 + M \left( \frac{P_a}{P_c} - 1 \right) \tag{1}$$
 where  
 $P_a$:  atmospheric pressure at the time the sample was measured  
 $P_c$:  atmospheric pressure at calibration time  
-$C_m$:  measured analyzer output at pressure $P_a$  
+$C_m$:  measured analyzer output (e.g. peak area, amount, concentration) at pressure $P_a$  
 $C_a$:  analyzer output as if the sample had been measured at $P_c$  
-$M$:    the slope of plot $\frac{C_m}{C_a}$ as a function of $\frac{P_a}{P_c}$
+$M$:    pressure compensation coefficient; the slope of plot $\frac{C_m}{C_a}$ as 
+a function of $\frac{P_a}{P_c}$
 
-The correction of the detector response (peak area or peak height) of a peak is given as 
+and the corresponding compensation function of the detector response (peak area or peak height) of a peak as 
 
-$$ Y^{\#} = \frac{Y}{1 + M \left( \frac{P_a}{P_c} - 1 \right)} \tag{2}$$
-where  
-$Y^{\#}$:  corrected analyzer output  
-$Y$:  measured analyzer output  
-
+$$ C_a = \frac{C_m}{1 + M \left( \frac{P_a}{P_c} - 1 \right)} \tag{2}$$
 The pressure artifact had caught the attention of an instrument manufacturer who 
 invented electronic pressure control (EPC), which tries to remedy the problem by 
 measuring atmospheric pressure and stabilizing pressures and flows of an instrument accordingly
 [3]. Despite these efforts the manufacturer still specifies an area precision at 
 better than 1% RSD [4]. This figure is in accordance with the long-run variances 
-obtained by our experiments without applying a correction.
+obtained by our experiments without applying any correction ot compensation.
 
 The pressure artifact seems to have been largely overlooked in the literature since then. 
 Barwick does not mention atmospheric pressure as a source of uncertainty in flame 
@@ -81,16 +121,16 @@ topic appear in a standard for the testing of flame ionization detectors [6].
 A pressure influence on FID response is even expressly rejected in another 
 standard [7].
 
-## Details
+## Instrumental details
 
 ### Theory of the flame ionization detector
 
-Theory is that an FID is a mass sensitive detector. An atmospheric 
-hydrogen-air flame forms its core. Any organic compound that reaches the flame produces ions
-in amounts which are almost perfectly proportional to the mass of carbon atoms reaching the flame [8].
+Theory is that a flame ionization detector is a mass sensitive detector. An atmospheric 
+hydrogen-air flame forms its core. Any organic compound that enters the flame produces ions
+in an amount which is almost perfectly proportional to the mass of carbon atoms reaching the flame [8].
 
 Technically speaking, the FID measures the rate at which these ions are produced 
-and subsequently collected. Its output voltage $V$ is expected to be proportional 
+and subsequently collected. The output voltage $V$ of the detector is expected to be proportional 
 to the ion formation rate $\dot{n}$ and the charge collection efficiency $\eta_c$.
 
 $$V \propto \eta_c \dot{n} = \eta_c(P, \theta)   \left[ r_{br}(\theta) \times \frac{x_CM_C}{M_G} \right] \left[ F_d \times \frac{P M_G}{RT} \right] \tag{3}$$
@@ -109,19 +149,19 @@ $T$:  temperature of the feed gas
 The expression in the left square bracket gives the mass ratio of ions formed in the burning 
 gas, while the expression in the right square bracket represents the mass flow rate into
 the flame. The equation suggests that the mass flow rate into the detector is proportional 
-to pressure, is the flow rates are not compensated by an EPC.
+to pressure; however, this only holds true if the gas flows to the detector are not controlled by an EPC.
 
-Ions and electrons are equally produced in the flame. An inhomogeneous electrostatic field 
+Ions and electrons are produced in the flame in equal amounts. An inhomogeneous electrostatic field 
 spreads between collector and jet. The collector is a tube which is aligned at a 
-small distance above the jet, see Fig. 1. The collector is negatively charged with respect 
+small distance above the jet, see Fig. 1. This collector is negatively charged with respect 
 to the jet and thus collects the positively charged ions, while the jet collects 
-the electrons. The movement of charges produces a small current which is amplified and converted to 
+the electrons. The movement of charge produces a small current which is amplified and converted to 
 a voltage in the detector electronics. Ions and electrons that have not been captured 
 recombine so that there remains a net zero charge. 
 
 It is well known that an FID will saturate at high analyte loading. This saturation 
 is caused by a space charge effect. When a massive amount of ions is generated, 
-these ions screen the electrostatic field and thus slow down the migration speed 
+these ions screen the electrostatic field to some extent and thus slow down the migration speed 
 of the ions. Consequently, ions and electrons have more time to recombine and the 
 sensitivity of the detector decreases.
 
@@ -131,7 +171,7 @@ same time flame stretch, which measures the rate at which the area of a flame
 surface grows, increases. In simple words: As the pressure increases, flame height 
 increases and flame width decreases. 
 
-When the flame length increases, the flame is partly located inside the collector tube,
+When the flame height increases, the flame starts to be partly located inside the collector tube,
 where the electrostatic field strength and the local charge collection efficiency 
 are zero, cf. Fig. 1.
 
@@ -140,14 +180,14 @@ and -0.8% per 10 hPa per 10 hPa of pressure increase. (A rate of -1.0% would ind
 detector response and pressure are inversely proportional.)
 
 
-![Fig. 1: Cutaway diagram of an FID (Source: www.agilent.com)][Fig 1.]{width=100%}
+![Fig. 1. Cutaway diagram of an FID (Source: www.agilent.com)][Fig 1.]{width=100%}
 
 
 
 ### Theory of the thermal conductivity detector
 
-Theory says that the thermal conductivity detector is a concentration sensitive detector. 
-The TCD has its application in gas analytics and process GC where it is used for the detection 
+Theory says that the a thermal conductivity detector is a concentration sensitive detector. 
+The TCD has its application in gas analytics and process analytics where it is used for the detection 
 of permanent gases and light hydrocarbons.
 
 According to van Es et al. [9] the output voltage $V$ of a TCD is given as
@@ -167,101 +207,103 @@ $\lambda_1$:  thermal conductivity of carrier gas
 $\lambda_2$:  thermal conductivity of sample  
 $A, B$:  constants  
 
-Van Es et al. [9] conclude: The thermal conductivity of carrier gas and component 
+Van Es et al. [9] conclude: "The thermal conductivity of carrier gas and component 
 are independent of pressure at least down to 0.1 bar. Consequently the TCD sensitivity 
-increases inversely proportional with pressure. 
+increases inversely proportional with pressure."
 
 Our measurements, however, show that the sensitivity of a TCD typically changes 
 at a rate of about -0.4% to -0.5% per 10hPa of pressure increase, which is only 
 half of the projected rate.
 
-![Fig. 2: Cutaway drawing of the Agilent single cell TCD (Source: www.agilent.com)][Fig 2.]{width=100%}
+![Fig. 2. Cutaway drawing of the Agilent single cell TCD (Source: www.agilent.com)][Fig 2.]{width=100%}
 
 
 ### Pressure effects during sample introduction
 
 Pressure is known to affect the response of an instrument when gaseous samples are 
-concerned: The sample amount is proportional to the pressure inside the sample 
+concerned: In this case the sample amount is proportional to the pressure inside the sample 
 loop. Accordingly this applies to the amount of the analyte and the measured peak area. 
 
-![Fig. 3: Schematic of a gas sampling valve (Source: www.vici.com)][Fig 3.]{width=100%}
+![Fig. 3. Schematic of a gas sampling valve (Source: www.vici.com)][Fig 3.]{width=100%}
 
 Please note that pressure has a positive effect on sample amount while its effect 
-on detector response is a negative one. Its rate of response change per pressure 
+on detector response is a negative one. For an ideal gas the rate of response change per pressure 
 change is +1.0% per 10hPa pressure increase. So injecting a gaseous sample at atmospheric 
-pressure counteracts the effect atmospheric pressure has on the respective 
+pressure counteracts the effect that atmospheric pressure has on the respective 
 detector. 
 
 ### Electronic pressure / flow control
 
 Electronic pneumatic controllers [3, 10] have been replacing manual pneumatic modules since
-the mid-1990s. EPC modules are easy to operate and guarantee stable gas flows regardless of
+the mid-1990s. EPC modules are easy to operate and guarantee a stable gas flow regardless of
 atmospheric pressure. The prime objective of its inventors was to achieve better retention
-time stability [3].
+time stability [3]. Area precision was not in their focus.
 
-Fig. 4 illustrates the workings of EPC on a S/SL inlet in split mode. Please follow 
+Fig. 4 illustrates the workings of EPC on an S/SL inlet in split mode. Please follow 
 the explanations given in [10]. During a split injection, a major part of the sample 
 is vented from the inlet to the atmosphere while only a minor part is introduced 
 into the column. The split ratio is set by the user in the analytical method. The
 firmware of the instruments calculates the setpoints of the pressure sensors in 
 order to obtain the required split, septum purge and column flow rates. Due to the
-calculation these are supposed to be independent of atmospheric pressure and the
+calculation these flows are supposed to be independent of atmospheric pressure and the
 split ratio is held constant.
 
-The above also applies to the detector feed gases.
+The above also applies to the detector feed gases when controlled by an EPC.
 
-![Fig. 4: Schematic of a Split/Splitless Inlet (Source: www.agilent.com)][Fig 4.]{width=100%}
+![Fig. 4. Schematic of a Split/Splitless Inlet (Source: www.agilent.com)][Fig 4.]{width=100%}
 
 ## Error and correction model
 
 The appac package features the error model
 
-$$ Y = \widehat{Y} \left( 1 + \kappa(P - P_{ref}) \right) \times \delta(\widehat{Y}, d) + \epsilon \tag{5}$$
+$$ Y = \widehat{Y} \left( 1 + \kappa(P - P_{ref}) \right) \times \delta(Y, d) + \epsilon \tag{5}$$
 where  
 $Y$:  measured peak area  
 $\widehat{Y}$:  true value of peak area  
 $\kappa$:  atmospheric pressure correction coefficient  
 $P$:  measured atmospheric pressure  
 $P_{ref}$:  reference pressure  
-$\delta(\widehat{Y}, d)$:  drift factor  
+$\delta(Y, d)$:  drift factor  
 $\epsilon$:  statistical error  
 
 The corresponding correction model follows as
 
-$$ Y^\# = \frac{Y} {\delta(\widehat{Y}, d) \times \left( 1 + \kappa(P - P_{ref}) \right)}  \tag{6} $$
+$$ Y^\# = \frac{Y} {\delta(Y, d) \times \left( 1 + \kappa(P - P_{ref}) \right)}  \tag{6} $$
 
 where  
 $Y^\#$:  corrected peak area
 
-Equation (6) resembles equation (2) if the drift factor $\delta(\widehat{Y}, d)$ 
+Equation (6) resembles equation (2) if the drift factor $\delta(Y, d)$ 
 is disregarded. 
 
 $$ Y^\# \approx \frac{Y} { 1 + \kappa(P - P_{ref}) } \tag{7};  \kappa \equiv \frac{M}{P_{ref}} $$
 
 Since we wanted the correction to be independent of a calibration, we applied the 
-correction to measurements of control samples alone. A fit according to (7) is a 
+correction to measurements of control samples. A fit according to (7) is a 
 naive fit, because it neglects instrumental artifacts such as baseline shift. 
 
 The naive fit is a three-step process:
 
-* First determine a reference pressure $P_{ref}$ that lies in the centre of the 
-data sets.  
-* For each peak of each control sample fit peak area $Y$ vs atmospheric pressure $P$ to 
-obtain the slope $dY/dP$ of the fitted line and the expected peak area $Y_{ref}$ 
-at $P_{ref}$. We will call this a local fit.  
-* Then fit $dY/dX$ vs $Y_{ref}$ of all local fits. We will call this the global fit. 
-The slope of this fit can be identified as $\kappa$.
+* First determine a reference pressure $P_{ref}$ that lies at the centre of the 
+data sets concerned.  
+* For each peak of each control sample fit peak area $Y$ vs atmospheric pressure $P$ 
+with a linear modelm to obtain the slope $dY/dP$ of the fitted line and the expected 
+peak area $Y_{ref}$ at $P_{ref}$. We will call this a local fit.  
+* Then fit $dY/dP$ vs $Y_{ref}$ of all local fits to a quadratic model 
 
-A naive fit is applicable to short time periods, where bias or trend cannot be 
-observed in the data. These are caused by instrumental artifacts and lead to a 
+$$dY/dP \sim 0 + Y_{ref} + Y_{ref}^2 \tag{8}$$
+We will call this the global fit. The fitted slope can be identified as $\kappa$.
+
+A naive fit is applicable only to short time periods, where bias or trend cannot be 
+observed in the data. These are caused by above-mentioned instrumental artifacts and lead to a 
 time-dependent bias in the data. This bias in return induces a high degree of 
 autocorrelation in the measurements series. The autocorrelation in the data must be
 removed before an attempt can be made to fit the pressure correction for longer 
 periods of time.
 
-Autocorrelation can be identified in a plot of a local fit. It may be visible as a 
-heavy-tailed or skewed distribution of the residuals, in extreme cases several 
-modes will appear, see Fig. 1.
+Autocorrelation can be visually identified in a plot of a local fit. It may be 
+identified by a heavy-tailed or skewed distribution of the residuals; in extreme 
+cases several modes will appear, see Fig. 1.
 
 ```{r show_autocorrelation, echo = TRUE, fig.width=7.2, fig.height=6}
 library(appac)
@@ -276,9 +318,9 @@ appac.colnames <- list(
 )
 appac.control <- list(min.data.points = 50)
 x <- suppressWarnings(appac(data = packed_FID, 
-           P.ref = P.ref, 
-           appac.control = appac.control, 
-           appac.colnames = appac.colnames))
+                            P.ref = P.ref, 
+                            appac.control = appac.control, 
+                            appac.colnames = appac.colnames))
 
 s <- "KGM.11D.4"; p <- "C3H8"
 colors <- list(highlight_color="black", lowlight_color="darkgrey", 
@@ -290,21 +332,94 @@ suppressWarnings(appac:::plot_local_fit(data = x, sample = s,
                  plot.residuals = TRUE, bins = 50))
 
 ```
-Fig. 5: Local fit of raw data showing severe signs of autocorrelation.
+
+Fig. 5. Local fit of raw data showing severe signs of autocorrelation.
 
 The autocorrelation function can also be calculated by the acf() function of the 
-stats package, see Fig. 2.
-```{r calc_autocorrelation, echo = TRUE, fig.width=7.2, fig.height=3}
-acf(x@correction@samples[[s]]$raw.area[,p], pl=TRUE)
+stats package, see Fig. 6 and 7.
+
+```{r calc_autocorrelation_raw, echo = TRUE, fig.width=7.2, fig.height=3}
+acf(rawAreas(x@correction, s)[,p], pl=TRUE)
 ```
-Fig 6. Plot of the autocorrelation function for the above data set.
+
+Fig 6. Plot of the autocorrelation function of the raw areas of the above data set.
+
+```{r calc_autocorrelation_corr, echo = TRUE, fig.width=7.2, fig.height=3}
+acf(compensatedCorrectedAreas(x@correction, s)[,p], pl=TRUE)
+```
+
+Fig. 7. For comparison: Plot of the autocorrelation function of the adjusted areas.
+
+A consequence of autocorrelated data is that the covariance matrix is positive 
+definite; the variance estimators are biased and inconsistent. It is essential to 
+remove the autocorrelation before a generalized linear model can be meaningfully 
+applied.
+
+An analysis of the available data has shown that autocorrelation does not exist for sufficiently 
+short segments of the time series. Autocorrelation is caused by structural breaks 
+within the data. Consequently, we will identify the breakpoints where the structural 
+breaks happen and slice the time series accordingly into segments, which we call episodes.
+
+A local fit (of area vs pressure) 
+
+$$Y \sim P \tag{9}$$
+like in the naive fit can then be applied to each of the episodes individually. 
+A quadratic global fit of 
+
+$$dY/dP \sim 0 + Y_{ref} + Y_{ref}^2 \tag{10}$$ 
+
+follows which includes all results of the local fits. 
+
+This first global fit, however, is overfitted because the bias underlying the 
+episodes has not yet been removed. A mean value of $\overline{Y}_{ref}$ is established
+as the mean of ${Y}_{corr}$ for each acquisition interval (daily, weekly, etc.)
+
+$$\overline{Y}_{ref} \equiv mean(\overline{Y}_{corr}) \tag{11}$$
+
+With $\overline{Y}_{ref}$, $bias(episode)$ is quantified for each episode as 
+
+$$bias(episode) = Y_{ref}(episode) - \overline{Y}_{ref} \tag{12}$$
+where
+
+$Y_{ref}(episode)$: the expected area at reference pressure of an episode  
+$\overline{Y}_{corr}$: the mean of the pressure corrected areas of the full data set
+
+The calculated bias is subtracted from the measured peak areas to obtain debiased
+raw areas, which are further corrected according to eqn. (7). This returns bias 
+compensated and pressure corrected peak areas $Y_{debias, corr}$. 
+
+Now a first estimate of the drift can be calculated. Daily drift factors $\delta(Y, d)$ 
+are obtained by fitting
+$$ Y  \sim  \overline{Y}_{ref} (+ \overline{Y}_{ref}^2) \tag{13}$$
+to all peaks measured on the same day. The fitted polynomial coefficients are 
+$b_0$, $b_1$ and $b_2$. Accordingly, the daily drift coefficient $\delta(Y, d)$ 
+is calculated as
+$$ \delta(Y, d) \approx b_0  + b_1 Y \left( + b_2 Y^2  \right) \tag{14} $$
+> **Question:**  
+How can this approximation be avoided?
+
+> **Note:**  
+Although it is possible to calculate the drift for a single control sample, the value 
+thus obtained is not menaningful for predicting the drift of other samples.
+
+In the next step the drift coefficients are applied to the raw peak areas, and compensated
+raw areas $Y_{raw,comp}$ are obtained. 
+
+Now $Y_{raw,comp}$ is subjected to a pressure fit according to eq. (9) and (10).
+Using the newly obtained value of $\kappa$, the raw areas are corrected to eq. (7) 
+again and the drift is recalculated according to eq. (13) and (14). Repeatedly, 
+corrected and compensated corrected are calculated with raw areas as the input.
+
+After the value of $\kappa$ has been improved in this way, it is now time to polish
+the drift. ...
 
 
 
 
+## Acknowledgements
 
-
-
+The author would like to sincerely thank Werner Hässelbarth, formerly of BAM, for 
+proof-reading the manuscript.
 
 ## References
 

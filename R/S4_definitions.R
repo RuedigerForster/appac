@@ -125,8 +125,8 @@ setGeneric("P", function(object, sample) {
 })
 
 setMethod("P",
-  signature(sample = "character",
-            object = "Correction"),
+  signature(object = "Correction",
+            sample = "character"),
   function(object, sample) {
     return(object@samples[[sample]]$pressure)
 })
@@ -136,8 +136,9 @@ setGeneric("rawAreas", function(object, sample) {
 })
 
 setMethod("rawAreas",
-  signature(sample = "character",
-            object = "Correction"),
+  signature(object = "Correction",
+            sample = "character"
+            ),
   function(object, sample) {
     return(object@samples[[sample]]$raw.area)
 })
@@ -147,8 +148,8 @@ setGeneric("correctedAreas", function(object, sample) {
 })
 
 setMethod("correctedAreas",
-  signature(sample = "character",
-            object = "Correction"),
+  signature(object = "Correction",
+            sample = "character"),
   function(object, sample) {
     return(object@samples[[sample]]$corrected.area)
 })
@@ -170,8 +171,8 @@ setGeneric("compensatedCorrectedAreas", function(object, sample) {
 })
 
 setMethod("compensatedCorrectedAreas",
-          signature(sample = "character",
-                    object = "Correction"),
+          signature(object = "Correction",
+                    sample = "character"),
           function(object, sample) {
             return(
               object@samples[[sample]]$compensated.corrected.area)
@@ -182,8 +183,8 @@ setGeneric("expectedAreas", function(object, sample) {
 })
 
 setMethod("expectedAreas",
-  signature(sample = "character",
-            object = "Correction"),
+  signature(object = "Correction",
+            sample = "character"),
   function(object, sample) {
     return(
       object@samples[[sample]]$expected.area)

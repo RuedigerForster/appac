@@ -1,3 +1,8 @@
+# ERROR
+# bias must be related to the mean of the pressure corrected areas
+# Is the mean of the raw areas different to the mean of the corrected areas?
+#
+#
 
 appac_step_1 <- function(df, P.ref, appac.control) {
   #
@@ -332,7 +337,7 @@ appac_step_1 <- function(df, P.ref, appac.control) {
   }
 
   #----------------------------------------------------------
-  # Calculate drift from debiased.raw.areas:
+  # Calculate drift from compensated.corrected.areas:
   #
   # drift.data: daily values of the drift factors
   # CAUTION: there are missing dates and values in drift

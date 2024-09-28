@@ -11,7 +11,9 @@ plot_global_fit <- function (data = NA, fit.coefs = NA,
                        line_color      = NA,
                        fill_color      = NA
                      )) {
-  # y <- y <- NULL
+  # for devtools::check()s sake:
+  # alt: changing x -> X$x or y -> X$y in ggplot function will throw a warning
+  x <- NULL; y <- NULL
   if (!all(c("x", "y", "u_x", "u_y", "n") %in% colnames(data)))
     stop("Must provide a data frame with columns: 'x', 'y', 'u_x', 'u_y', 'n'")
   if (any(is.na(colors)))
@@ -33,14 +35,14 @@ plot_global_fit <- function (data = NA, fit.coefs = NA,
   X <- data.frame (x = data$x, y = data$y, xmin, xmax, ymin, ymax, n = data$n)
   if (is.na(fit.coefs[2])) fit.coefs[2] <- 0
   draw_function <- function(x) return(fit.coefs[1]*x+fit.coefs[2]*x*x)
-  plot <- ggplot (data = X, aes(x = X$x, y = X$y)) +
+  plot <- ggplot (data = X, aes(x = x, y = y)) +
     stat_smooth(method = "lm",
                 data = X,
-                formula = X$y ~ poly(X$x, 2),
+                formula = y ~ poly(x, 2),
                 level = 0.9999, color = "NA", fill = colors$fill_color, alpha = 0.5) +
-    geom_errorbar(X, mapping = aes(x = X$x, ymin = ymin, ymax = ymax),
+    geom_errorbar(X, mapping = aes(x = x, ymin = ymin, ymax = ymax),
                   linewidth=0.7, color = colors$lowlight_color) +
-    geom_errorbarh(X, mapping = aes(y = X$y, xmin = xmin, xmax = xmax),
+    geom_errorbarh(X, mapping = aes(y = y, xmin = xmin, xmax = xmax),
                    linewidth=0.7, color = colors$lowlight_color) +
     geom_point(size = 3, shape = 20, color = colors$highlight_color)  +
     theme(text = element_text(size=14), legend.position = "none" ) +
