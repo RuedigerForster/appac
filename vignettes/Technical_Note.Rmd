@@ -390,7 +390,7 @@ compensated and pressure corrected peak areas $Y_{debias, corr}$.
 
 Now a first estimate of the drift can be calculated. Daily drift factors $\delta(Y, d)$ 
 are obtained by fitting
-$$ Y  \sim  \overline{Y}_{ref} (+ \overline{Y}_{ref}^2) \tag{13}$$
+$$ Y_{debias, corr}  \sim  \overline{Y}_{ref} (+ \overline{Y}_{ref}^2) \tag{13}$$
 to all peaks measured on the same day. The fitted polynomial coefficients are 
 $b_0$, $b_1$ and $b_2$. Accordingly, the daily drift coefficient $\delta(Y, d)$ 
 is calculated as
