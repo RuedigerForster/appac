@@ -219,14 +219,11 @@ Now, let us view the plots of the local fits.
 colors <- list(highlight_color="red", lowlight_color="darkgrey", 
                line_color="darkblue", fill_color="lightblue")
 
-## get the sample names
-samples <- names(x@correction@samples)
+## a sample name
+s <- "KGM.11D.4"
 
-for (s in samples) {
-  ## get the peak names of sample s
-  peaks <- colnames(x@correction@samples[[s]]$raw.area)
-  gridExtra::grid.arrange(grobs = lapply(peaks, function(p) suppressWarnings(plotLocalFit(object=x, sample=s, peak=p, colors=colors))), ncol=2)
-}
+peaks <- colnames(x@correction@samples[[s]]$raw.area)
+gridExtra::grid.arrange(grobs = lapply(peaks, function(p) suppressWarnings(plotLocalFit(object=x, sample=s, peak=p, colors=colors))), ncol=2)
 ```
 
 What to look out for in these plots?
@@ -251,14 +248,7 @@ Finally, we will have a look at the control charts.
 colors <- list(highlight_color="yellow", lowlight_color="darkgrey", 
                line_color="darkblue", fill_color="lightblue")
 
-## get the sample names
-samples <- names(x@correction@samples)
-
-for (s in samples) {
-  ## get the peak names of sample s
-  peaks <- colnames(x@correction@samples[[s]]$raw.area)
-  gridExtra::grid.arrange(grobs = lapply(peaks, function(p) suppressWarnings(plotControlChart(object=x, sample=s, peak=p, colors=colors))), ncol=2)
-}
+gridExtra::grid.arrange(grobs = lapply(peaks, function(p) suppressWarnings(plotControlChart(object=x, sample=s, peak=p, colors=colors))), ncol=2)
 ```
 
 In order to validate the calculated drift, please check for a trend in the fitted data.

@@ -37,13 +37,6 @@ appac ( data,
     output areas will differ. It is recommended to choose the median of the 
     pressure measurements of the dataset.
   }
-  \item{appac.control}{
-    a list of the control elements which determine how the data are processed.
-	    \itemize{
-	      \item \code{min.data.points:} integer(>0). The minimum number of data
-	      points belonging to a peak from which an episode is analysed.
-	    }
-    }
   \item{appac.colnames}{
   a list of column names of \code{df}, which contain the following information:
 	    \itemize{
@@ -57,6 +50,13 @@ appac ( data,
 	      measured peak areas
       }
   }
+  \item{appac.control}{
+    a list of the control elements which determine how the data are processed.
+	    \itemize{
+	      \item \code{min.data.points:} integer(>0). The minimum number of data
+	      points belonging to a peak from which an episode is analysed.
+	    }
+    }
 }
 \details{
 Sample and peak names in the input data frame are used as variables in the code
