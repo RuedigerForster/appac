@@ -16,15 +16,14 @@
 
 appac <- function(data, 
                   P.ref = 1013.25,
-                  appac.control = list(
-                    min.data.points = 50
-                  ),
                   appac.colnames = list(
                     sample.col = NA,
                     peak.col = NA,
                     date.col = NA,
                     pressure.col = NA,
-                    area.col = NA
+                    area.col = NA),
+                  appac.control = list(
+                    min.data.points = 50
                   )) {
 
 
@@ -45,7 +44,7 @@ appac <- function(data,
   
   #----------------------------------------------------------
   # check if data contains all peaks for every file
-  # nrow(data) must be amultiple of length(peaks)
+  # nrow(data) must be a multiple of length(peaks)
   #----------------------------------------------------------
   if (nrow(data) %% length(unique(data$peak.name)) != 0) {
     stop("Missing data points")

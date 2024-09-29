@@ -59,7 +59,7 @@ appac_step_2 <- function(appac, P.ref) {
   # # set area.ref to the expected values obtained from global.fit
   # # and refit slope
   # #----------------------------------------------------------
-  slope <- predict(global.fit)
+  slope <- stats::predict(global.fit)
   a <- coefficients.global.fit[1] / coefficients.global.fit[2] / 2
   if (a < 0) {
     area.ref <- sqrt(abs(slope / coefficients.global.fit[2] - a^2)) + a
@@ -107,6 +107,6 @@ appac_step_2 <- function(appac, P.ref) {
   }
   names(Drift@samples) <- names(compensated.raw.areas) <- spls
 
-  return(new("Appac", drift = Drift, correction = Correction))
+  return(methods::new("Appac", drift = Drift, correction = Correction))
 }
 

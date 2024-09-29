@@ -17,12 +17,12 @@ response is linearized in the output.
 \usage{
 appac ( data,
         P.ref = 1013.25,
-        appac.control  = list(min.data.points = 50),
         appac.colnames = list(sample.col = NA,
                               peak.col = NA,
                               date.col = NA,
                               pressure.col = NA,
-                              area.col = NA)
+                              area.col = NA),
+        appac.control  = list(min.data.points = 50)
       )
 }
 \arguments{
@@ -110,8 +110,8 @@ appac.control <- list(min.data.points = 50)
 
 ## appac will throw warnings that sample and peak names have been changed
 x <- appac(data = PLOT_FID, P.ref = P.ref, 
-           appac.control = appac.control, 
-           appac.colnames = appac.colnames)
+           appac.colnames = appac.colnames,
+           appac.control = appac.control)
 
 ## view results
 print(paste("Air pressure correction coefficient (kappa):", 

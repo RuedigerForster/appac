@@ -1,6 +1,7 @@
 
 appac_step_3 <- function(appac, P.ref) {
 
+  n <- NULL
   Correction <- appac@correction
   Drift <- appac@drift
   spls <- names(Correction@samples)
@@ -20,7 +21,7 @@ appac_step_3 <- function(appac, P.ref) {
   residual.areas <- lapply(seq_along(Drift@samples), function(x)
     Drift@samples[[x]]$compensated.raw.area - expected.areas[[x]])
   .P <- lapply(Drift@samples, function(x) x$pressure  - P.ref)
-  fit.bias <- lapply(seq_along(.P), function(x) stats::lm(formula = residual.areas[[x]] ~ .P[[x]], na.action = na.omit)) # aref[[x]] +
+  fit.bias <- lapply(seq_along(.P), function(x) stats::lm(formula = residual.areas[[x]] ~ .P[[x]], na.action = stats::na.omit)) # aref[[x]] +
   cor.intercept <- sapply(fit.bias, function(x) stats::coefficients(x)[1,] )
   cor.slope <- sapply(fit.bias, function(x) coefficients(x)[2,])
   std.errors <- sapply(fit.bias, function(x) sqrt(diag(stats::vcov(x))))
@@ -109,5 +110,5 @@ appac_step_3 <- function(appac, P.ref) {
     Correction@samples[[i]]$compensated.corrected.area <- as.matrix(compensated.corrected.areas[[i]][, -c(1, 2)])
   }
   names(Drift@samples) <- names(compensated.raw.areas) <- spls
-  return(new("Appac", drift = Drift, correction = Correction))
+  return(methods::new("Appac", drift = Drift, correction = Correction))
 }

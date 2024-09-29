@@ -95,7 +95,7 @@ get.daily.areas <- function(
     daily.areas <- lapply(daily.areas, function(x) {
       x <- x %>%
         dplyr::group_by(date) %>%
-        dplyr::summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE))) %>%
+        dplyr::summarise(dplyr::across(dplyr::where(is.numeric), ~ mean(.x, na.rm = TRUE))) %>%
         ungroup()
     })
     names(daily.areas) <- smp
@@ -278,7 +278,7 @@ fit.level <- function(Y, P, cmp, area.ref = NULL, family = VGAM::uninormal()) {
   # vglm
   fit1 <- VGAM::vglm(formula = .Y ~ 1 + .P,  family = family, # family = VGAM::uninormal(), # family = VGAM::cauchy(),
                       control = VGAM::vglm.control(maxit = 1000),
-                      na.action = na.omit)
+                      na.action = stats::na.omit)
   l <- ncol(.Y)
   idx <- c(is.odd(1:(2 * l)), rep(F, l))
   intercept <- unname(coefficients(fit1)[idx])

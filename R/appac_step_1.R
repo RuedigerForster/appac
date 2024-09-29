@@ -12,8 +12,8 @@ appac_step_1 <- function(df, P.ref, appac.control) {
   sample.name <- NULL
   spls <- unique(df$sample.name)
   cmps <- unique(df$peak.name)
-  Correction <- new("Correction")
-  Drift <- new("Drift")
+  Correction <- methods::new("Correction")
+  Drift <- methods::new("Drift")
 
   #----------------------------------------------------------
   # Calculate local fits (step 1):
@@ -30,7 +30,7 @@ appac_step_1 <- function(df, P.ref, appac.control) {
     #----------------------------------------------------------
     # some data wrangling
     #----------------------------------------------------------
-    df_ <- df %>% filter(sample.name == smp)
+    df_ <- df %>% dplyr::filter(sample.name == smp)
     idx <- lapply(cmps, function(x) df_$peak.name == x)
 
     #----------------------------------------------------------
@@ -66,7 +66,7 @@ appac_step_1 <- function(df, P.ref, appac.control) {
       cmpl <- cmps
     }
     colnames(Y) <- cmpl
-    rsd <- sapply(1:ncol(Y), function(x) sd(Y[, x], na.rm = T)/mean(Y[, x], na.rm = T))
+    rsd <- sapply(1:ncol(Y), function(x) stats::sd(Y[, x], na.rm = T)/mean(Y[, x], na.rm = T))
     cutoff <- 0.025
     if (any(rsd > cutoff))
       warning("The noise in the input data of peak(s): ", paste0("'", colnames(Y)[rsd > cutoff], sep = "'"), " in sample '", smp, "' exceeds the allowed noise level of ", sprintf("%.1f", cutoff*100), "%.")
@@ -89,7 +89,7 @@ appac_step_1 <- function(df, P.ref, appac.control) {
     Y.scaled <- as.data.frame(Y.scaled)
     Y.scaled <- Y.scaled %>%
       dplyr::group_by(date) %>%
-      dplyr::summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE))) %>%
+      dplyr::summarise(dplyr::across(dplyr::where(is.numeric), ~ mean(.x, na.rm = TRUE))) %>%
       ungroup()
     Y.scaled <- as.data.frame(Y.scaled[, -1])
     grid <- expand.grid.unique(seq_along(cmpl), seq_along(cmpl))
@@ -250,7 +250,7 @@ appac_step_1 <- function(df, P.ref, appac.control) {
   #----------------------------------------------------------
   # set area.ref and slope to the expected values obtained from global.fit
   #----------------------------------------------------------
-  slope <- predict(global.fit)
+  slope <- stats::predict(global.fit)
   k <- 1
   for (i in seq_along(Correction@local.fits)) {
     nel <- length(Correction@local.fits[[i]]$area.ref)
@@ -366,5 +366,5 @@ appac_step_1 <- function(df, P.ref, appac.control) {
   }
   names(Drift@samples) <- names(compensated.areas) <- spls
 
-  return(new("Appac", drift = Drift, correction = Correction))
+  return(methods::new("Appac", drift = Drift, correction = Correction))
 }
