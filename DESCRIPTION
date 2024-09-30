@@ -4,11 +4,16 @@ Title: Atmospheric Pressure Peak Area Correction
 Version: 0.1.3
 Author: Ruediger Forster <ruediger.forster@gmx.net> [aut, cre]
 Maintainer: Ruediger Forster <ruediger.forster@gmx.net>
-Description: Correct the ambient pressure effect on the peak areas of GC/FID and GC/TCD chromatograms.
+Description: Remove the effect that atmospheric pressure has on the response of 
+    flame ionization detectors or thermal conductivity detectors in gas chromatography. 
+    This effect, however, is diluted by instrumental artifacts such as baseline 
+    shift or drift which cause bias in the data. The code negotiates the 
+    experimental errors between a drift object and a correction object.
 License: GPL-3
+URL: https://github.com/RuedigerForster/appac
+BugReports: https://github.com/RuedigerForster/appac/issues
 Encoding: UTF-8
 LazyData: true
-LazyDataCompression: bzip2
 Imports: methods, stats, dplyr, data.table, Rbeast, VGAM, gridExtra,
     ggplot2, ggpubr, patchwork, mathjaxr, magrittr, utils
 Suggests: knitr, testthat (>= 3.0.0)

@@ -1,4 +1,4 @@
-# library(data.table)
+library(data.table)
 
 source("./R/plot.R")
 
@@ -282,14 +282,15 @@ setMethod("driftFactor",
 
 #------------- Appac methods ------------------------------
 
-setGeneric("plotGlobalFit", function(object, colors) {
+setGeneric("plotGlobalFit", function(object, size, colors) {
   standardGeneric("plotGlobalFit")
 })
 
 setMethod("plotGlobalFit",
   signature(object = "Appac",
+            size = "numeric",
             colors = "list"),
-  function(object, colors) {
+  function(object, size, colors) {
     if (length(colors) != 4 || !all(names(colors) %in% c("highlight_color",
                                                          "lowlight_color",
                                                          "line_color",
@@ -309,7 +310,7 @@ setMethod("plotGlobalFit",
   }
 )
 
-setGeneric("plotControlChart", function(object, sample, peak, colors) {
+setGeneric("plotControlChart", function(object, sample, peak, size, colors) {
   standardGeneric("plotControlChart")
 })
 
@@ -317,8 +318,9 @@ setMethod("plotControlChart",
   signature(object = "Appac",
             sample = "character",
             peak = "character",
+            size = "numeric",
             colors = "list"),
-  function(object, sample, peak, colors) {
+  function(object, sample, peak, size, colors) {
     if (!sample %in% names(object@correction@samples)) {
       stop("Unknown sample '", sample, "'. Sample may be any of: ", paste0("'", names(object@correction@samples), sep = "' "))
     }
@@ -334,14 +336,14 @@ setMethod("plotControlChart",
       stop("Incorrect colors.")
     }
     p <- plot_control_chart(data = object, sample = sample,
-                        peak = peak, colors = colors,
+                        peak = peak, colors = colors, size = size,
                         show.compensated.areas = TRUE,
                         plot.residuals = TRUE, bins = 50)
     return(p)
   }
 )
 
-setGeneric("plotLocalFit", function(object, sample, peak, colors) {
+setGeneric("plotLocalFit", function(object, sample, peak, size, colors) {
   standardGeneric("plotLocalFit")
 })
 
@@ -349,8 +351,9 @@ setMethod("plotLocalFit",
   signature(object = "Appac",
             sample = "character",
             peak = "character",
+            size = "numeric",
             colors = "list"),
-  function(object, sample, peak, colors) {
+  function(object, sample, peak, size, colors) {
     if (!sample %in% names(object@correction@samples)) {
       stop("Unknown sample '", sample, "'. Sample may be any of: ", paste0("'", names(object@correction@samples), sep = "' "))
     }
@@ -366,8 +369,8 @@ setMethod("plotLocalFit",
       stop("Incorrect colors.")
     }
     p <- plot_local_fit(data = object, sample = sample,
-                   peak = peak, coefs = coefficients(object),
-                   colors = colors, show.compensated.areas = T,
+                   peak = peak, coefs = coefficients(object@correction),
+                   colors = colors, size = size, show.compensated.areas = TRUE,
                    plot.residuals = TRUE, bins = 50)
     return(p)
   }

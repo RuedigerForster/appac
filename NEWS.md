@@ -8,4 +8,4 @@
 
 # appac 0.1.3
 
-* added vignette on theory
+* added vignette on theory, updated plot, made code examples CRAN compliant

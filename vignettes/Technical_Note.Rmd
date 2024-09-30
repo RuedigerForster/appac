@@ -1,7 +1,6 @@
 ---
 title: "The Effect of Ambient Pressure on the Response of FID and TCD"
 subtitle: "Technical Note"
-author: "Rüdiger Forster"
 description: |
     Technical Note
 output:
@@ -31,7 +30,7 @@ Presented here is an expert package with the objective of removing the effect th
 atmospheric pressure has on the response of a flame ionization detector (FID) or a
 thermal conductivity detector (TCD) in gas chromatography. Since the artifact generated 
 by atmospheric pressure is diluted by other artifacts such as baseline shift or 
-drift which causes bias in the data, the code negotiates the experimental errors 
+drift which cause bias in the data, the code negotiates the experimental errors 
 between a drift object and a correction object. This vignette describes the theoretical
 background and gives insight into the algorithm deployed.
 
@@ -287,7 +286,7 @@ The naive fit is a three-step process:
 * First determine a reference pressure $P_{ref}$ that lies at the centre of the 
 data sets concerned.  
 * For each peak of each control sample fit peak area $Y$ vs atmospheric pressure $P$ 
-with a linear modelm to obtain the slope $dY/dP$ of the fitted line and the expected 
+with a linear model to obtain the slope $dY/dP$ of the fitted line and the expected 
 peak area $Y_{ref}$ at $P_{ref}$. We will call this a local fit.  
 * Then fit $dY/dP$ vs $Y_{ref}$ of all local fits to a quadratic model 
 
@@ -298,7 +297,7 @@ A naive fit is applicable only to short time periods, where bias or trend cannot
 observed in the data. These are caused by above-mentioned instrumental artifacts and lead to a 
 time-dependent bias in the data. This bias in return induces a high degree of 
 autocorrelation in the measurements series. The autocorrelation in the data must be
-removed before an attempt can be made to fit the pressure correction for longer 
+removed before an attempt can be made to fit a pressure correction for longer 
 periods of time.
 
 Autocorrelation can be visually identified in a plot of a local fit. It may be 

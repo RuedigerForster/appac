@@ -87,15 +87,11 @@ library(appac)
 
 ## PLOT_FID is a long dataset of daily measurements of 5 control samples taken on
 ## a dedicated natural gas analyzer.
-data("PLOT_FID")
-
-## truncate the data set in favor of a shorter calculation time
-PLOT_FID <- PLOT_FID[1:30000, ]
-
+data("PGC_TCD")
 
 ## define P.ref as the median of the measured ambient pressures at injection time
 ## data set contains some NA, because of missing peaks
-P.ref <- median(PLOT_FID$air.pressure, na.rm = TRUE)
+P.ref <- median(PGC_TCD$air.pressure, na.rm = TRUE)
 
 ## define the column names of the dataset
 appac.colnames <- list(
@@ -106,10 +102,10 @@ appac.colnames <- list(
   area.col      = "raw.area"
 )
 
-appac.control <- list(min.data.points = 50)
+appac.control <- list(min.data.points = 5)
 
 ## appac will throw warnings that sample and peak names have been changed
-x <- appac(data = PLOT_FID, P.ref = P.ref, 
+x <- appac(data = PGC_TCD, P.ref = P.ref, 
            appac.colnames = appac.colnames,
            appac.control = appac.control)
 
@@ -120,6 +116,6 @@ print(paste("Air pressure correction coefficient (kappa):",
 ## plot the fit
 colors <- list(highlight_color="black", lowlight_color="darkgrey", 
                line_color="darkblue", fill_color="lightblue")
-plotGlobalFit(x, colors)
+plotGlobalFit(x, size = 2, colors)
 
 }

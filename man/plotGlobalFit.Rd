@@ -1,7 +1,7 @@
 \docType{methods}
 \name{plotGlobalFit}
 \alias{plotGlobalFit}
-\alias{plotGlobalFit,Appac,list-method}
+\alias{plotGlobalFit,Appac,numeric,list-method}
 \title{
 Plot the global (APPAC) fit function
 }
@@ -10,12 +10,15 @@ S4 method to plot an APPAC global fit.
 \loadmathjax{}
 }
 \usage{
-\S4method{plotGlobalFit}{Appac,list}(object, colors)
+\S4method{plotGlobalFit}{Appac,numeric,list}(object, size, colors)
 %plotGlobalFit(object, colors)
 }
 \arguments{
   \item{object}{
 an object of class \code{\link{Appac}}
+}
+  \item{size}{
+a numeric value which controls the size of the axis labels and titles
 }
   \item{colors}{
     a list containing the colors of the color scheme to be used in the plot:
@@ -52,11 +55,11 @@ a ggplot object
 ## Not run:
 library(appac)
 
-data("packed_FID")
+data("PGC_TCD")
 
 ## define P.ref as the median of the measured ambient pressures at injection time
 ## data set contains some NA, because of missing peaks
-P.ref <- median(packed_FID$air.pressure, na.rm = TRUE)
+P.ref <- median(PGC_TCD$air.pressure, na.rm = TRUE)
 
 ## define the column names of the dataset
 appac.colnames <- list(
@@ -67,11 +70,11 @@ appac.colnames <- list(
   area.col      = "raw.area"
 )
 
-appac.control <- list(min.data.points = 50)
+appac.control <- list(min.data.points = 5)
 
 ## appac will throw warnings that sample and peak names have been changed
 x <- suppressWarnings(
-       appac(data = packed_FID, 
+       appac(data = PGC_TCD, 
        P.ref = P.ref, 
        appac.control = appac.control, 
        appac.colnames = appac.colnames)
@@ -80,7 +83,7 @@ x <- suppressWarnings(
 ## View results
 colors <- list(highlight_color="black", lowlight_color="darkgrey", 
                line_color="darkblue", fill_color="lightblue")
-plotGlobalFit(x, colors)
+plotGlobalFit(x, size = 4, colors)
 }
 
 \keyword{plots}
