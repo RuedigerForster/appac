@@ -408,15 +408,34 @@ Now $Y_{raw,comp}$ is subjected to a pressure fit according to eq. (9) and
 
 $$dY/dP \sim 0 + Y_{ref} \tag{10b}$$ 
 
-Using the newly obtained value of $\kappa$, the raw areas are corrected to eq. (7) 
-again and the drift is recalculated according to eq. (13) and (14). Repeatedly, 
+From this stage on, $\kappa$ can be fitted using a linear fit only as the p-values show
+that the formerly essential quadratic coefficient is insignificant now. Using the 
+newly obtained value of $\kappa$, the raw areas are corrected according 
+to eq. (7) and then drift is recalculated according to eq. (13) and (14). Repeatedly, 
 corrected and compensated corrected are calculated with raw areas as the input.
 
-After the value of $\kappa$ has been improved in this way, it is now time to polish
-the drift. ...
+The value of $\kappa$ has been improved after this round; it is time now to polish
+the drift. This requires that any remaining bias in the residual is removed.
 
+We do this in the following way: First we calculate expected and residual areas with 
+the current drift factors and correction coefficient. Next we fit the residuals 
+against pressure to remove any hints of uncompensated pressure dependence from 
+the residual areas
 
+$$ r_Y \sim P; r_Y = Y - \widehat{Y} \tag{15} $$
+In this way, correction values $corr(dY/dP)$ for the slopes $dY/dP$ and the reference areas $Y_{ref}$: $corr(Y_{ref})$
+of the local fits are obtained, see eq. (8). Subsequently, the corrections are applied to the original values and 
+corrected values of the slopes and reference areas are obtained.
 
+$$ {dY/dP}_{corr} = dY/dP + corr(dY/dP) \tag{16} $$
+
+$$ Y_{ref, corr} = Y_{ref} + corr(Y_{ref}) \tag{17} $$
+
+Using these corrected slopes and reference areas, a new global fit, eq. (10b) is 
+triggered. Following corrected areas, drift, compensate, expected and residual 
+areas are recalculated. 
+
+At this point, the final results of drift and correction are achieved.
 
 ## Acknowledgements
 
