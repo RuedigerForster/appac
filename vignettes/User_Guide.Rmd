@@ -29,7 +29,7 @@ The appac package features a main function, which is:
 
 It is surrounded by several other functions (which are actually methods) that help to retrieve the input and the fitted (output) data.
 
-The package uses the S4 class system. To familiarize yourself with S4 classes and methods, we recommend the section ‘The S4 object system’ from Hadley Wickham's excellent book ‘Advanced R’, which is fortunately available online [2].
+The package uses the S4 class system. To familiarize yourself with S4 classes and methods, we recommend the section ‘The S4 object system’ from Hadley Wickham's excellent book ‘Advanced R’, which is thankfully available online [2].
 
 ## Input to the appac function
 
@@ -50,9 +50,11 @@ Each row of the data frame must represent a single peak.
 > **Note:**  
 The user must decide in advance which peaks/components are to be evaluated; only these peaks may be included in the input data frame. Otherwise the data frame must be filtered accordingly before it is passed to the appac function. 
 
+> **Note:**  
 It is important that each of the predetermined peaks from each chromatogram is listed in the data frame. Peaks that have not been integrated or are not present in the sample must be reported as ‘NA’.
 
 
+> **Note:**  
 It is important that report each of the pre-determined peaks from every chromatogram in the data frame. Peaks which have not been integrated or are absent in the sample must be reported as `NA`.
 
 The column headers must be named. The names of the column headers must be passed to the appac function through the list `appac.colnames`.
@@ -80,8 +82,12 @@ The package provides a set of methods which allow the user to extract certain in
 #### Results of the atmospheric pressure correction
 
 > **Note:**  
-As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If these names do not comply with the conventions, they are converted to compliant names and a respective warning is issued. To be able to use one of these names in a method, the changed names must be used. (Maybe it is a good idea to provide a conversion function `checkNames` which does this conversion on occasion of a user call instead of doing it inside of a black box. Your opinions, please.)
+As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If these names do not comply with the conventions, they are converted to compliant names and a respective warning is issued. To be able to use one of these names in a method, the changed names must be used. 
 
+<span style="color:red">
+**Question:**
+Maybe it is a good idea to provide a conversion function `checkNames` which does this conversion on occasion of a user call instead of doing it inside of a black box. Your opinions, please.
+</span>
 
 The atmospheric pressure correction function fits one parameter, coefficient $\kappa$. The following methods are related to the fitted value of $\kappa$ and return:
 
