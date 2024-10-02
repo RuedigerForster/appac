@@ -23,23 +23,31 @@ appac <- function(data,
                     pressure.col = NA,
                     area.col = NA),
                   appac.control = list(
-                    min.data.points = 50
-                  )) {
+                    min.data.points = 50, 
+                    drift.model = c("linear", "quadratic"))
+                  ) {
 
+  if (missing(data))  {
+    stop("Input 'data' is missing")
+  }
+  
+  data <- check.cols(data, appac.colnames)
+
+  appac.control$drift.model <- match.arg(appac.control$drift.model, c("linear", "quadratic"))
+  
+  #----------------------------------------------------------
+  # check if min.data.points is a positive integer
+  #----------------------------------------------------------
+  appac.control$min.data.points <- as.integer(appac.control$min.data.points)
+  if(appac.control$min.data.points < 0L) {
+    stop("'appac.control$min.data.points' must have a positive value")
+  }
 
   #----------------------------------------------------------
-  # check if data contains all required and correctly named columns
+  # check if P.ref is within the range of the input pressures
   #----------------------------------------------------------
-  check.cols1 <- c(
-    "sample.col", "peak.col", "date.col", "pressure.col",
-    "area.col") %in% names(appac.colnames)
-  check.cols2 <- appac.colnames %in% colnames(data)
-  check.cols <- check.cols1 & check.cols2
-  if (!all(check.cols)) {
-    stop(
-      "Could not find the column(s): '",
-      paste0(appac.colnames[!check.cols], "'", collapse = ", '")
-    )
+  if(!is.numeric(P.ref) | P.ref < min(data$air.pressure, na.rm = TRUE) | P.ref > max(data$air.pressure, na.rm = TRUE)) {
+    stop("P.ref: ", P.ref, " is out of range: ", min(data$air.pressure,  na.rm = TRUE), " <  P.ref < ", max(data$air.pressure, na.rm = TRUE))
   }
   
   #----------------------------------------------------------
@@ -50,50 +58,12 @@ appac <- function(data,
     stop("Missing data points")
   }
   
-  #----------------------------------------------------------
-  # rename and extract the data columns
-  #----------------------------------------------------------
-  orig_col_names <- colnames(data)
-  idx <- sapply(appac.colnames, function(x) which(orig_col_names == x))
-  data <- data[, idx]
-  colnames(data) <- c("sample.name", "peak.name", "injection.date", "air.pressure", "raw.area")
-
-  #----------------------------------------------------------
-  # check if P.ref is within the range of the input pressures
-  #----------------------------------------------------------
-  if(!is.numeric(P.ref) | P.ref < min(data$air.pressure, na.rm = TRUE) | P.ref > max(data$air.pressure, na.rm = TRUE)) {
-    stop("P.ref: ", P.ref, " is out of range: ", min(data$air.pressure,  na.rm = TRUE), " <  P.ref < ", max(data$air.pressure, na.rm = TRUE))
-  }
-  
-  #----------------------------------------------------------
-  # make the sample and peak names compatible to R naming conventions,
-  # i.e. convert special characters to '.' but keep the (upper, lower) case
-  #----------------------------------------------------------
-  orig_peak_names <- unique(data$peak.name)
-  clean_peak_names <- make.names(orig_peak_names)
-  orig_sample_names <- unique(data$sample.name)
-  clean_sample_names <- make.names(orig_sample_names)
-  for (i in 1:length(orig_peak_names)) {
-    idx <- data$peak.name == orig_peak_names[i]
-    data$peak.name[idx] <- clean_peak_names[i]
-  }
-  for (i in 1:length(orig_sample_names)) {
-    idx <- data$sample.name == orig_sample_names[i]
-    data$sample.name[idx] <- clean_sample_names[i]
-  }
-  if (!identical(orig_peak_names, clean_peak_names))
-    warning("Special characters in 'peak.name' have been replaced by '.'")
-  if (!identical(orig_sample_names, clean_sample_names))
-    warning("Special characters in 'sample.name' have been replaced by '.'")
-  rm(list = c("orig_peak_names", "clean_peak_names", "orig_sample_names",
-              "clean_sample_names", "check.cols", "check.cols1", "check.cols2"))
-
     
     
   
   step_1 <- appac_step_1(data, P.ref, appac.control)
-  step_2 <- appac_step_2(step_1, P.ref)
-  step_3 <- appac_step_3(step_2, P.ref)
+  step_2 <- appac_step_2(step_1, P.ref, appac.control)
+  step_3 <- appac_step_3(step_2, P.ref, appac.control)
   return(step_3)
 }
 

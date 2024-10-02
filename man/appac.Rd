@@ -22,7 +22,8 @@ appac ( data,
                               date.col = NA,
                               pressure.col = NA,
                               area.col = NA),
-        appac.control  = list(min.data.points = 50)
+        appac.control  = list(min.data.points = 50,
+                              drift.model = c("linear", "quadratic"))
       )
 }
 \arguments{
@@ -40,23 +41,25 @@ appac ( data,
   \item{appac.colnames}{
   a list of column names of \code{df}, which contain the following information:
 	    \itemize{
-	      \item \code{sample.col:} character. The name of the column containing 
+	      \item \code{sample.col}: character. The name of the column containing 
 	      the names of the samples
-	      \item \code{peak.col:} character. The name of the column containing the 
+	      \item \code{peak.col}: character. The name of the column containing the 
 	      names of the peaks
-	      \item \code{pressure.col:} character. The name of the column containing 
+	      \item \code{pressure.col}: character. The name of the column containing 
 	      the measured atmospheric pressures
-	      \item \code{area.col:} character. The name of the column containing the
+	      \item \code{area.col}: character. The name of the column containing the
 	      measured peak areas
       }
   }
   \item{appac.control}{
     a list of the control elements which determine how the data are processed.
 	    \itemize{
-	      \item \code{min.data.points:} integer(>0). The minimum number of data
+	      \item \code{min.data.points}: integer(>0). The minimum number of data
 	      points belonging to a peak from which an episode is analysed.
-	    }
-    }
+	    	\item \code{drift.model}: character. Experimental feature, determines how drift is modeled.
+	   }
+  }
+%%  \item{\dots}{additional parameters. Currently not in use.}
 }
 \details{
 Sample and peak names in the input data frame are used as variables in the code
@@ -102,7 +105,7 @@ appac.colnames <- list(
   area.col      = "raw.area"
 )
 
-appac.control <- list(min.data.points = 5)
+appac.control <- list(min.data.points = 5, drift.model = "linear")
 
 ## appac will throw warnings that sample and peak names have been changed
 x <- appac(data = PGC_TCD, P.ref = P.ref, 

@@ -342,7 +342,9 @@ appac_step_1 <- function(df, P.ref, appac.control) {
   # drift.data: daily values of the drift factors
   # CAUTION: there are missing dates and values in drift
   #----------------------------------------------------------
-  drift.data <- get.drift(Correction@samples, type = "compensated.corrected.area") # "corrected.area"
+  drift.data <- get.drift(Correction@samples, 
+                          type = "compensated.corrected.area", 
+                          drift.model = appac.control$drift.model) # "corrected.area"
   Drift@drift.factors <- drift.data$drift
 
   #----------------------------------------------------------

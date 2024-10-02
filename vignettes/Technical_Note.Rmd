@@ -309,7 +309,7 @@ appac.colnames <- list(
   pressure.col  = "air.pressure",
   area.col      = "raw.area"
 )
-appac.control <- list(min.data.points = 50)
+appac.control <- list(min.data.points = 50, drift.model = "quadratic")
 x <- suppressWarnings(appac(data = packed_FID, 
                             P.ref = P.ref, 
                             appac.control = appac.control, 

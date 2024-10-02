@@ -6,9 +6,62 @@
 # library(stats)
 # library(VGAM)
 
-# #############################################################
-# Erik made comment to see how working in github works. 
-###############################################################
+check.cols <- function(data, appac.colnames) {
+  #----------------------------------------------------------
+  # check if data contains all required and correctly named columns
+  #----------------------------------------------------------
+  check.cols1 <- c(
+    "sample.col", "peak.col", "date.col", "pressure.col",
+    "area.col") %in% names(appac.colnames)
+  check.cols2 <- appac.colnames %in% colnames(data)
+  check.cols <- check.cols1 & check.cols2
+  if (!all(check.cols)) {
+    stop(
+      "Could not find the column(s): '",
+      paste0(appac.colnames[!check.cols], "'", collapse = ", '")
+    )
+  }
+
+  #----------------------------------------------------------
+  # rename and extract the data columns
+  #----------------------------------------------------------
+  orig_col_names <- colnames(data)
+  idx <- sapply(appac.colnames, function(x) which(orig_col_names == x))
+  data <- data[, idx]
+  colnames(data) <- c("sample.name", "peak.name", "injection.date", "air.pressure", "raw.area")
+  
+  #----------------------------------------------------------
+  # make the sample and peak names compatible to R naming conventions,
+  # i.e. convert special characters to '.' but keep the (upper, lower) case
+  #----------------------------------------------------------
+  orig_peak_names <- unique(data$peak.name)
+  clean_peak_names <- make.names(orig_peak_names)
+  orig_sample_names <- unique(data$sample.name)
+  clean_sample_names <- make.names(orig_sample_names)
+  for (i in 1:length(orig_peak_names)) {
+    idx <- data$peak.name == orig_peak_names[i]
+    data$peak.name[idx] <- clean_peak_names[i]
+  }
+  for (i in 1:length(orig_sample_names)) {
+    idx <- data$sample.name == orig_sample_names[i]
+    data$sample.name[idx] <- clean_sample_names[i]
+  }
+  if (!identical(orig_peak_names, clean_peak_names)) {
+    idx <- orig_peak_names != clean_peak_names
+    message("Peak names: '", paste0(orig_peak_names[idx], collapse = "', "),  
+            "' have been replaced by: '", paste0(clean_peak_names[idx], collapse = "', "), "\n")
+  }
+  if (!identical(orig_sample_names, clean_sample_names)) {
+    idx <- orig_sample_names != clean_sample_names
+    message("Sample names: '", paste0(orig_sample_names, collapse = "', "),  
+            "' have been replaced by: '", paste0(clean_sample_names, collapse = "', "))
+  }
+  # rm(list = c("orig_peak_names", "clean_peak_names", "orig_sample_names",
+  #             "clean_sample_names", "check.cols", "check.cols1", "check.cols2"), "\n")
+
+  return(data)
+}
+
 
 expand.grid.unique <- function(x, y, include.equals = FALSE) {
   x <- unique(x)
@@ -128,11 +181,15 @@ get.daily.pressures <- function(samples) {
   return(out.table)
 }
 
-get.drift <- function(samples, area.ref = NULL, type = c("raw.area",
-                                        "corrected.area",
-                                        "compensated.corrected.area")) {
+get.drift <- function(samples, 
+                      area.ref = NULL, 
+                      type = c("raw.area",
+                               "corrected.area",
+                               "compensated.corrected.area"),
+                      drift.model = c("linear", "quadratic")) {
   # browser()
   type <- match.arg(type)
+  drift.model <- match.arg(drift.model)
   smp <- names(samples)
   Y <- get.daily.areas(samples = samples, type = type)
   P <- get.daily.pressures(samples)
@@ -168,15 +225,21 @@ get.drift <- function(samples, area.ref = NULL, type = c("raw.area",
   tt <- list()
   for (i in 1:nrow(Y1)) {
     if (!all(is.na(Y1[i,-1]))) {
-      tt[[i]] <- stats::lm(unlist(Y1[i,-1]) ~ x1 + x2, na.action = na.omit)
-      # tt[[i]] <- stats::lm(unlist(Y1[i,-1]) ~ x1, na.action = na.omit)
+      if (drift.model == "quadratic") {
+        tt[[i]] <- stats::lm(unlist(Y1[i,-1]) ~ x1 + x2, na.action = na.omit)
+      } else {
+        tt[[i]] <- stats::lm(unlist(Y1[i,-1]) ~ x1, na.action = na.omit)
+      }
     } else tt[[i]] <- list(coefficients = c(NA, NA, NA))
   }
   # browser()
   icp <- unname(unlist(sapply(tt, function(x) x$coefficients[1])))
   slp <- unname(unlist(sapply(tt, function(x) x$coefficients[2])))
-  slp2 <- unname(unlist(sapply(tt, function(x) x$coefficients[3])))
-  # slp2 <- rep(0, length(slp))
+  if (drift.model == "quadratic") {
+    slp2 <- unname(unlist(sapply(tt, function(x) x$coefficients[3])))
+  } else {
+    slp2 <- rep(0, length(slp))
+  }
   drift <- data.frame(date = Y1[, 1], pressure = P[, 2], factor <- icp, aref = slp, aref.2 = slp2)
   colnames(drift) <- c("date", "pressure", "factor", "area", "area.2")
   drift <- drift[order(drift$date), ]

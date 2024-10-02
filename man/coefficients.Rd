@@ -62,7 +62,7 @@ appac.colnames <- list(
   area.col      = "raw.area"
 )
 
-appac.control <- list(min.data.points = 5)
+appac.control <- list(min.data.points = 5, drift.model = "linear")
 
 ## appac will throw warnings that sample and peak names have been changed
 x <- suppressWarnings(appac(data = PGC_TCD,

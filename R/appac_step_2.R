@@ -1,5 +1,5 @@
 
-appac_step_2 <- function(appac, P.ref) {
+appac_step_2 <- function(appac, P.ref, appac.control) {
 
   Correction <- appac@correction
   Drift <- appac@drift
@@ -89,7 +89,10 @@ appac_step_2 <- function(appac, P.ref) {
   # recalculate drift
   #----------------------------------------------------------
   area.ref <- lapply(Correction@local.fits, function(x) x$area.ref)
-  drift.data <- get.drift(Correction@samples, type = "corrected.area", area.ref = area.ref) # , area.ref = area.ref "corrected.area"
+  drift.data <- get.drift(samples = Correction@samples, 
+                          area.ref = area.ref,
+                          type = "corrected.area", 
+                          drift.model = appac.control$drift.model) # "linear") # , area.ref = area.ref "corrected.area"
   Drift@drift.factors <- drift.data$drift
 
   compensated.raw.areas <- lapply(spls, function(x)

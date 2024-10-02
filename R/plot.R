@@ -164,7 +164,7 @@ plot_local_fit <- function (data, sample, peak, coefs, colors, size = 4, show.co
     subset <- ifelse(outliers, 2, 1)
   } else subset <- rep(1, length(dates))
   Z <- as.data.frame (cbind(x = x, y1 = y1, y2 = y2, s = subset))
-  binwidth <- (max(Z[,2]) - min(Z[,2])) / bins
+  binwidth <- (max(Z[,2], na.rm=T) - min(Z[,2], na.rm=T)) / bins
   p2 <- ggplot (Z) +
     # raw areas
     geom_point(data = Z, mapping = aes(x = x, y = y1),
@@ -187,14 +187,14 @@ plot_local_fit <- function (data, sample, peak, coefs, colors, size = 4, show.co
     residuals_plot_theme(size = size)
   # histogram of residuals
   p3 <- ggplot(data = na.omit(Z), mapping = aes(x = y1)) +
-    geom_histogram(aes(y = after_stat(density)), binwidth = binwidth, position="identity", fill = lowlight_color, color = lowlight_color)
+    geom_histogram(aes(y = after_stat(density)), binwidth = binwidth, na.rm=T, position="identity", fill = lowlight_color, color = lowlight_color)
   if (show.compensated.areas) {
     p3 <- p3 +
-      geom_histogram(aes(x = y2, y = after_stat(density)), binwidth = binwidth, position="identity", fill = highlight_color, alpha = 0.4)
+      geom_histogram(aes(x = y2, y = after_stat(density)), binwidth = binwidth, na.rm=T, position="identity", fill = highlight_color, alpha = 0.4)
   }
   p3 <- p3 + 
     geom_vline(aes(xintercept = 0), color = line_color, linetype="dashed", linewidth = 1) +
-    geom_function(color = line_color, linewidth = 1, fun = dnorm, args = list(mean = mean(y1), sd = sd(y1))) +
+    geom_function(color = line_color, linewidth = 1, fun = dnorm, args = list(mean = mean(y1,na.rm=T), sd = sd(y1,na.rm=T))) +
     histogram_plot_theme(size = size) +
     xlim(l.y.limit, h.y.limit) +
     coord_flip() 
@@ -225,7 +225,7 @@ plot_control_chart <- function (data, sample, peak, colors, size = 4, show.compe
   span <- 0.025 * area.ref
   l.y.limit <- area.ref - span
   h.y.limit <- area.ref + span
-  brk = c(1, 2, 3, 4, 5, 6, 9, 12)
+  brk = c(1, 3, 6, 12)
   nb <- as.numeric((max(x) - min(x)) / 300)
   y.breaks <- brk[which(abs(brk-nb)==min(abs(brk-nb)))]
   # outliers
@@ -277,7 +277,7 @@ plot_control_chart <- function (data, sample, peak, colors, size = 4, show.compe
   } else subset <- rep(1, length(x))
   Z <- as.data.frame (cbind(x = x, y1 = y1, y2 = y2, s = subset))
   Z[, 1] <- as.Date(Z[, 1], origin = "1970-01-01") # as.Date(Z[, 1])
-  binwidth <- (max(Z[,2]) - min(Z[,2])) / bins
+  binwidth <- (max(Z[,2], na.rm=T) - min(Z[,2], na.rm=T)) / bins
   p2 <- ggplot (Z) +
     # raw areas
     geom_point(data = Z, mapping = aes(x = x, y = y1),
@@ -300,14 +300,14 @@ plot_control_chart <- function (data, sample, peak, colors, size = 4, show.compe
     residuals_plot_theme(size = size)
   # histogram of residuals
   p3 <- ggplot(data = na.omit(Z), mapping = aes(x = y1)) +
-    geom_histogram(aes(y = after_stat(density)), binwidth = binwidth, position="identity", fill = lowlight_color, color = lowlight_color)
+    geom_histogram(aes(y = after_stat(density)), binwidth = binwidth, na.rm=T, position="identity", fill = lowlight_color, color = lowlight_color)
   if (show.compensated.areas) {
     p3 <- p3 +
-      geom_histogram(aes(x = y2, y = after_stat(density)), binwidth = binwidth, position="identity", fill = highlight_color, alpha = 0.4)
+      geom_histogram(aes(x = y2, y = after_stat(density)), binwidth = binwidth, na.rm=T, position="identity", fill = highlight_color, alpha = 0.4)
   }
   p3 <- p3 + 
     geom_vline(aes(xintercept = 0), color = line_color, linetype="dashed", linewidth = 1) +
-    geom_function(color = line_color, linewidth = 1, fun = dnorm, args = list(mean = mean(y1), sd = sd(y1))) +
+    geom_function(color = line_color, linewidth = 1, fun = dnorm, args = list(mean = mean(y1,na.rm=T), sd = sd(y1,na.rm=T))) +
     histogram_plot_theme(size = size) +
     xlim(l.y.limit, h.y.limit) +
     coord_flip() 

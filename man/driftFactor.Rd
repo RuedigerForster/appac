@@ -60,7 +60,7 @@ appac.colnames <- list(
   area.col      = "raw.area"
 )
 
-appac.control <- list(min.data.points = 5)
+appac.control <- list(min.data.points = 5, drift.model = "linear")
 
 x <- suppressWarnings(appac(data = PGC_TCD,
                             P.ref = P.ref,
