@@ -205,7 +205,7 @@ of the pressure effect. Flame length is directly proportional to the volumetric
 flowrate [8a]. Given a constant mass flow rate, volumetric flow rate is inversely 
 proportional to pressure. An EPC in constant flow mode provides a constant mass 
 flow rate.  
-Instruments having manual pneumatics, provide a constant volumetric flow rate 
+Instruments having manual pneumatics [8c], provide a constant volumetric flow rate 
 independent of pressure, and so is the flame length.
 
 
@@ -593,7 +593,9 @@ overlooked implications for fossil fuel combustion modeling, Progress in energy
 and combustion science 34, 330-350 (2008)
 
 [8a] Turns, S. R:, An introduction to combustion, Concepts and applications, McGraw-Hill,
-Boston (2000)
+Boston (2011)
+
+[8c] Vici Valco Instruments, Model 100 flow controller, Technical Note 613, Vici AG International (2011)
 
 [9] van Es, A. J. J., Cramers, C. A. M. G., & Rijks, J. A., Detection limits of thermal conductivity and photoionization detectors in high speed narrow bore CGC, Journal of High Resolution Chromatography 12(5), 303-307 (1989)
 
