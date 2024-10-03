@@ -19,7 +19,7 @@ Method \code{driftFactor} provides a method to calculate drift factors.
     length, or one of them must have length 1.
   }
   \item{date}{
-    a vector of class \code{\link{IDate}} which has the same length as
+    a vector of class \code{\link[data.table]{IDate}} which has the same length as
     \code{area} or length 1.}
   \item{object}{a \code{\link{Drift-class}} object}
 }
