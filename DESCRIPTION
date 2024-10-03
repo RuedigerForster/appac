@@ -22,7 +22,7 @@ Encoding: UTF-8
 LazyData: TRUE
 Imports: methods, stats, dplyr, data.table, Rbeast, VGAM, gridExtra,
     ggplot2, ggpubr, patchwork, mathjaxr, magrittr, utils
-Suggests: knitr, testthat (>= 3.0.0)
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 RdMacros: mathjaxr
 ByteCompile: TRUE
 BuildManual: TRUE
