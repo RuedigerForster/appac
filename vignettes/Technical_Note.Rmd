@@ -310,20 +310,26 @@ appac.colnames <- list(
   area.col      = "raw.area"
 )
 appac.control <- list(min.data.points = 50, drift.model = "quadratic")
-x <- suppressWarnings(appac(data = packed_FID, 
-                            P.ref = P.ref, 
-                            appac.control = appac.control, 
-                            appac.colnames = appac.colnames))
+x <- suppressWarnings(appac(
+  data = packed_FID,
+  P.ref = P.ref,
+  appac.control = appac.control,
+  appac.colnames = appac.colnames
+))
 
-s <- "KGM.11D.4"; p <- "C3H8"
-colors <- list(highlight_color="black", lowlight_color="darkgrey", 
-               line_color="darkblue", fill_color="lightblue")
+s <- "KGM.11D.4"
+p <- "C3H8"
+colors <- list(
+  highlight_color = "black", lowlight_color = "darkgrey",
+  line_color = "darkblue", fill_color = "lightblue"
+)
 
-suppressWarnings(appac:::plot_local_fit(data = x, sample = s,
-                 peak = p, coefs = coefficients(x),
-                 colors = colors, show.compensated.areas = FALSE,
-                 plot.residuals = TRUE, bins = 50))
-
+suppressWarnings(appac:::plot_local_fit(
+  data = x, sample = s,
+  peak = p, coefs = coefficients(x),
+  colors = colors, show.compensated.areas = FALSE,
+  plot.residuals = TRUE, bins = 50
+))
 ```
 
 Fig. 5. Local fit of raw data exhibiting bias.
@@ -340,13 +346,13 @@ Bias causes autocorrelation in the data. The autocorrelation function can be
 calculated by the acf() function of the stats package, see Fig. 6 and 7.
 
 ```{r calc_autocorrelation_raw, echo = TRUE, fig.width=7.2, fig.height=3}
-acf(rawAreas(x@correction, s)[,p], pl=TRUE)
+acf(rawAreas(x@correction, s)[, p], pl = TRUE)
 ```
 
 Fig 6. Plot of the autocorrelation function of the raw areas of the above data set.
 
 ```{r calc_autocorrelation_corr, echo = TRUE, fig.width=7.2, fig.height=3}
-acf(compensatedCorrectedAreas(x@correction, s)[,p], pl=TRUE)
+acf(compensatedCorrectedAreas(x@correction, s)[, p], pl = TRUE)
 ```
 
 Fig. 7. For comparison: Plot of the autocorrelation function of the adjusted areas.

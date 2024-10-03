@@ -66,10 +66,11 @@ appac_step_1 <- function(df, P.ref, appac.control) {
       cmpl <- cmps
     }
     colnames(Y) <- cmpl
-    rsd <- sapply(1:ncol(Y), function(x) stats::sd(Y[, x], na.rm = T)/mean(Y[, x], na.rm = T))
+    rsd <- sapply(1:ncol(Y), function(x) stats::sd(Y[, x], na.rm = T) / mean(Y[, x], na.rm = T))
     cutoff <- 0.025
-    if (any(rsd > cutoff))
-      warning("The noise in the input data of peak(s): ", paste0("'", colnames(Y)[rsd > cutoff], sep = "'"), " in sample '", smp, "' exceeds the allowed noise level of ", sprintf("%.1f", cutoff*100), "%.")
+    if (any(rsd > cutoff)) {
+      warning("The noise in the input data of peak(s): ", paste0("'", colnames(Y)[rsd > cutoff], sep = "'"), " in sample '", smp, "' exceeds the allowed noise level of ", sprintf("%.1f", cutoff * 100), "%.")
+    }
 
     # NA in the data cause trouble. Columns with more than 75% NA will be eliminated.
     idx <- sapply(1:ncol(Y), function(y) sum(is.na(Y[, y])) / nrow(Y)) <= 0.25
@@ -108,20 +109,20 @@ appac_step_1 <- function(df, P.ref, appac.control) {
     # calulation is parallelized
     #----------------------------------------------------------
     bp <- Rbeast::beast123(Y.grid,
-                           season = "none",
-                           detrend = F,
-                           hasOutlier = T,
-                           method = "bayes",
-                           metadata = list(
-                             whichDimIsTime = 1,
-                             startTime = min(X),
-                             # time = X.scaled,
-                             deltaTime = 1,
-                             hasOutlier = T,
-                             detrend = F
-                           ),
-                           mcmc = list(seed = 42),
-                           extra = list(quiet = T)
+      season = "none",
+      detrend = F,
+      hasOutlier = T,
+      method = "bayes",
+      metadata = list(
+        whichDimIsTime = 1,
+        startTime = min(X),
+        # time = X.scaled,
+        deltaTime = 1,
+        hasOutlier = T,
+        detrend = F
+      ),
+      mcmc = list(seed = 42),
+      extra = list(quiet = T)
     )
     # ncp: number of occurences of the breakpoint
     ncp <- ceiling(bp$trend$ncp)
@@ -194,8 +195,9 @@ appac_step_1 <- function(df, P.ref, appac.control) {
     # fit area vs P of the sliced data sets
     #----------------------------------------------------------
     if (length(.xL) > 0) {
-      fit.results <- lapply(1:length(.xL), function(x)
-        data.frame(begin = .bL[[x]], end = .eL[[x]], n = .n[[x]], fit.level(.yL[[x]], .pL[[x]], cmpl, family = VGAM::cauchy())))
+      fit.results <- lapply(1:length(.xL), function(x) {
+        data.frame(begin = .bL[[x]], end = .eL[[x]], n = .n[[x]], fit.level(.yL[[x]], .pL[[x]], cmpl, family = VGAM::cauchy()))
+      })
       fit.results.table <- do.call(rbind, fit.results)
       rownames(fit.results.table) <- NULL
       #----------------------------------------------------------
@@ -216,7 +218,9 @@ appac_step_1 <- function(df, P.ref, appac.control) {
         expected.area = matrix(nrow = nrow(Y), ncol = ncol(Y)),
         compensated.corrected.area = matrix(nrow = nrow(Y), ncol = ncol(Y))
       )
-    } else spls <- spls[-which(spls == smp)]
+    } else {
+      spls <- spls[-which(spls == smp)]
+    }
   } # curly bracket opened at line: for (smp in spls)
   # rm(list = c("grid", "P", "Y", "Y.grid", "Y.scaled", "fit.results", "fit.results.table"))
 
@@ -255,8 +259,8 @@ appac_step_1 <- function(df, P.ref, appac.control) {
   for (i in seq_along(Correction@local.fits)) {
     nel <- length(Correction@local.fits[[i]]$area.ref)
     # Correction@local.fits[[i]]$area.ref <- area.ref[k:(k+nel-1)]
-    Correction@local.fits[[i]]$slope <- slope[k:(k+nel-1)]
-    k <- k + nel-1
+    Correction@local.fits[[i]]$slope <- slope[k:(k + nel - 1)]
+    k <- k + nel - 1
   }
 
   #----------------------------------------------------------
@@ -276,16 +280,18 @@ appac_step_1 <- function(df, P.ref, appac.control) {
       })
       aref <- Correction@local.fits[[i]]$area.ref[idx.local.fits]
       P <- lapply(idx.correction.samples, function(x) Correction@samples[[i]]$pressure[x])
-      date <- data.table::as.IDate(unlist(lapply(idx.correction.samples,
-                                                 function(x) Correction@samples[[i]]$date[x]))
-      )
-      expected.area <- unlist(get.expected.area(P = P,
-                                                aref = aref,
-                                                P_ref = P.ref,
-                                                Correction@global.fit$coefficients))
+      date <- data.table::as.IDate(unlist(lapply(
+        idx.correction.samples,
+        function(x) Correction@samples[[i]]$date[x]
+      )))
+      expected.area <- unlist(get.expected.area(
+        P = P,
+        aref = aref,
+        P_ref = P.ref,
+        Correction@global.fit$coefficients
+      ))
       idx <- which(Correction@samples[[i]]$date %in% date)
       Correction@samples[[i]]$expected.area[idx, j] <- expected.area
-
     }
     colnames(Correction@samples[[i]]$expected.area) <-
       colnames(Correction@samples[[i]]$raw.area)
@@ -306,10 +312,12 @@ appac_step_1 <- function(df, P.ref, appac.control) {
   area.ref <- get.daily.areas(samples = Correction@samples, type = "corrected.area")
   area.ref <- lapply(area.ref, function(y) colMeans(y[, -1]))
   names(area.ref) <- spls
-  bias.data <- lapply(seq_along(bias.data), function(x)
-    data.frame(date = bias.data[[x]][, 1],
-               sweep(bias.data[[x]][, -1], 2, area.ref[[x]], "-"))
-  )
+  bias.data <- lapply(seq_along(bias.data), function(x) {
+    data.frame(
+      date = bias.data[[x]][, 1],
+      sweep(bias.data[[x]][, -1], 2, area.ref[[x]], "-")
+    )
+  })
   names(bias.data) <- spls
   Drift@bias <- bias.data
   rm(bias.data)
@@ -326,9 +334,12 @@ appac_step_1 <- function(df, P.ref, appac.control) {
     idx <- Correction@samples[[smp]]$date %in% Drift@bias[[smp]]$date
     date <- dates(object = Correction, sample = smp)
     areas <- correctedAreas(object = Correction, sample = smp)
-    bias <- do.call(rbind,
-                    lapply(date[idx] , function(x)
-                      Drift@bias[[smp]][which(Drift@bias[[smp]]$date == x), ]))
+    bias <- do.call(
+      rbind,
+      lapply(date[idx], function(x) {
+        Drift@bias[[smp]][which(Drift@bias[[smp]]$date == x), ]
+      })
+    )
     bias <- as.matrix(areas[idx] - bias[, -1])
     rownames(bias) <- NULL
     compensated.corrected.areas <- matrix(NA, nrow = nrow(areas), ncol = ncol(areas))
@@ -342,9 +353,10 @@ appac_step_1 <- function(df, P.ref, appac.control) {
   # drift.data: daily values of the drift factors
   # CAUTION: there are missing dates and values in drift
   #----------------------------------------------------------
-  drift.data <- get.drift(Correction@samples, 
-                          type = "compensated.corrected.area", 
-                          drift.model = appac.control$drift.model) # "corrected.area"
+  drift.data <- get.drift(Correction@samples,
+    type = "compensated.corrected.area",
+    drift.model = appac.control$drift.model
+  ) # "corrected.area"
   Drift@drift.factors <- drift.data$drift
 
   #----------------------------------------------------------
@@ -353,18 +365,23 @@ appac_step_1 <- function(df, P.ref, appac.control) {
   # This is the input to calculate the pressure correction function
   # in step 2
   #----------------------------------------------------------
-  compensated.areas <- lapply(spls, function(x)
-    get.compensated.area(x, P_ref = P.ref,
-                         drift = Drift,
-                         correction = Correction,
-                         type = "raw.area",
-                         debias = T) # T
+  compensated.areas <- lapply(
+    spls, function(x) {
+      get.compensated.area(x,
+        P_ref = P.ref,
+        drift = Drift,
+        correction = Correction,
+        type = "raw.area",
+        debias = T
+      )
+    } # T
   )
   for (i in seq_along(compensated.areas)) {
     Drift@samples[[i]] <- list(
       date = compensated.areas[[i]]$date,
       pressure = compensated.areas[[i]]$P,
-      compensated.raw.area = as.matrix(compensated.areas[[i]][, -c(1, 2)]))
+      compensated.raw.area = as.matrix(compensated.areas[[i]][, -c(1, 2)])
+    )
   }
   names(Drift@samples) <- names(compensated.areas) <- spls
 

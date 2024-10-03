@@ -170,7 +170,6 @@ appac.colnames <- list(
   pressure.col  = "air.pressure",
   area.col      = "raw.area"
 )
-
 ```
 
 and call the function:
@@ -179,10 +178,12 @@ and call the function:
 ## call the appac function
 ## the output is stored in the variable x
 ## please check the warnings carefully
-x <- appac(data = packed_FID, 
-           P.ref = P.ref, 
-           appac.control = appac.control, 
-           appac.colnames = appac.colnames)
+x <- appac(
+  data = packed_FID,
+  P.ref = P.ref,
+  appac.control = appac.control,
+  appac.colnames = appac.colnames
+)
 ```
 
 The function has thrown four warnings, the first two of which were to be expected. 
@@ -192,12 +193,14 @@ Instead, let us have a look at the plotted output of the global fit.
 
 ```{r plot_global_fit, echo=TRUE, fig.width=7.2, fig.height=4}
 ## define the color scheme
-colors <- list(highlight_color="orange", lowlight_color="black", 
-               line_color="darkblue", fill_color="lightblue")
+colors <- list(
+  highlight_color = "orange", lowlight_color = "black",
+  line_color = "darkblue", fill_color = "lightblue"
+)
 
 ## plot the output of the appac function
 ## the output has been stored in variable x
-plotGlobalFit(object=x, colors=colors, size=4)
+plotGlobalFit(object = x, colors = colors, size = 4)
 ```
 
 At first sight, this result seems sensible in spite of the warnings thrown by the vglm.fitter. Let us look at 
@@ -221,14 +224,16 @@ be safely ignored.
 Now, let us view the plots of the local fits.
 ```{r plot_local_fits, echo=TRUE, fig.width=7.2, fig.height=8}
 ## define the color scheme
-colors <- list(highlight_color="red", lowlight_color="darkgrey",
-               line_color="darkblue", fill_color="lightblue")
+colors <- list(
+  highlight_color = "red", lowlight_color = "darkgrey",
+  line_color = "darkblue", fill_color = "lightblue"
+)
 
 ## a sample name
 s <- "KGM.11D.4"
 
 peaks <- colnames(x@correction@samples[[s]]$raw.area)
-gridExtra::grid.arrange(grobs = lapply(peaks, function(p) FUN = suppressWarnings(plotLocalFit(object=x, sample=s, peak=p, colors=colors, size=2))), ncol=2)
+gridExtra::grid.arrange(grobs = lapply(peaks, function(p) FUN <- suppressWarnings(plotLocalFit(object = x, sample = s, peak = p, colors = colors, size = 2))), ncol = 2)
 ```
 
 What to look out for in these plots?
@@ -250,10 +255,12 @@ Finally, we will have a look at the control charts.
 
 ```{r plot_control_charts, echo=TRUE, fig.width=7.2, fig.height=8}
 ## define the color scheme
-colors <- list(highlight_color="yellow", lowlight_color="darkgrey",
-               line_color="darkblue", fill_color="lightblue")
+colors <- list(
+  highlight_color = "yellow", lowlight_color = "darkgrey",
+  line_color = "darkblue", fill_color = "lightblue"
+)
 
-gridExtra::grid.arrange(grobs = lapply(peaks, function(p) FUN = suppressWarnings(plotControlChart(object=x, sample=s, peak=p, colors=colors, size=2))), ncol=2)
+gridExtra::grid.arrange(grobs = lapply(peaks, function(p) FUN <- suppressWarnings(plotControlChart(object = x, sample = s, peak = p, colors = colors, size = 2))), ncol = 2)
 ```
 
 In order to validate the calculated drift, please check for a trend in the fitted data.

@@ -12,7 +12,8 @@ check.cols <- function(data, appac.colnames) {
   #----------------------------------------------------------
   check.cols1 <- c(
     "sample.col", "peak.col", "date.col", "pressure.col",
-    "area.col") %in% names(appac.colnames)
+    "area.col"
+  ) %in% names(appac.colnames)
   check.cols2 <- appac.colnames %in% colnames(data)
   check.cols <- check.cols1 & check.cols2
   if (!all(check.cols)) {
@@ -29,7 +30,7 @@ check.cols <- function(data, appac.colnames) {
   idx <- sapply(appac.colnames, function(x) which(orig_col_names == x))
   data <- data[, idx]
   colnames(data) <- c("sample.name", "peak.name", "injection.date", "air.pressure", "raw.area")
-  
+
   #----------------------------------------------------------
   # make the sample and peak names compatible to R naming conventions,
   # i.e. convert special characters to '.' but keep the (upper, lower) case
@@ -48,13 +49,17 @@ check.cols <- function(data, appac.colnames) {
   }
   if (!identical(orig_peak_names, clean_peak_names)) {
     idx <- orig_peak_names != clean_peak_names
-    message("Peak names: '", paste0(orig_peak_names[idx], collapse = "', "),  
-            "' have been replaced by: '", paste0(clean_peak_names[idx], collapse = "', "), "\n")
+    message(
+      "Peak names: '", paste0(orig_peak_names[idx], collapse = "', "),
+      "' have been replaced by: '", paste0(clean_peak_names[idx], collapse = "', "), "\n"
+    )
   }
   if (!identical(orig_sample_names, clean_sample_names)) {
     idx <- orig_sample_names != clean_sample_names
-    message("Sample names: '", paste0(orig_sample_names, collapse = "', "),  
-            "' have been replaced by: '", paste0(clean_sample_names, collapse = "', "))
+    message(
+      "Sample names: '", paste0(orig_sample_names, collapse = "', "),
+      "' have been replaced by: '", paste0(clean_sample_names, collapse = "', ")
+    )
   }
   # rm(list = c("orig_peak_names", "clean_peak_names", "orig_sample_names",
   #             "clean_sample_names", "check.cols", "check.cols1", "check.cols2"), "\n")
@@ -81,7 +86,7 @@ is.odd <- function(value) {
   (value %% 2) == 1
 }
 
-closest <- function(selection, value){
+closest <- function(selection, value) {
   selection[which(abs(selection - value) == min(abs(selection - value)))]
 }
 
@@ -91,9 +96,9 @@ get.expected.area <- function(P, aref, P_ref, coefficients) {
   dP <- sapply(P, function(x) x - P_ref)
   dP2 <- sapply(dP, function(x) x * x)
   if (is.list(dP)) {
-    factors <- lapply(seq_along(dP), function(x)
+    factors <- lapply(seq_along(dP), function(x) {
       1 + coefficients[1] * dP[[x]] + coefficients[2] * dP2[[x]]
-    )
+    })
     res <- sapply(1:length(aref), function(x) aref[x] * factors[[x]])
   } else {
     factors <- 1 + coefficients[1] * dP + coefficients[2] * dP2
@@ -122,27 +127,29 @@ get.area.ref <- function(sample, data) {
   for (c in cmp) {
     idx <- pks == c
     area.ref <- aref[idx]
-    res[, c] <- unlist(lapply(seq_along(begin), function(x)
-      rep(area.ref[x], end[x] - begin[x] + 1))
-    )
+    res[, c] <- unlist(lapply(seq_along(begin), function(x) {
+      rep(area.ref[x], end[x] - begin[x] + 1)
+    }))
   }
   return(res)
 }
 
 get.daily.areas <- function(
     samples,
-    type = c("raw.area",
-             "corrected.area",
-             "expected.area",
-             "compensated.corrected.area")) {
+    type = c(
+      "raw.area",
+      "corrected.area",
+      "expected.area",
+      "compensated.corrected.area"
+    )) {
   type <- match.arg(type)
   smp <- names(samples)
   dates <- lapply(samples, function(x) x$date)
   # browser()
   daily.areas <- lapply(samples, function(x) x[[type]])
-  daily.areas <- lapply(1:length(dates), function(x)
+  daily.areas <- lapply(1:length(dates), function(x) {
     data.frame(date = dates[[x]], daily.areas[[x]])
-  )
+  })
   # browser()
   if (any(sapply(dates, function(x) any(duplicated(x))))) {
     daily.areas <- lapply(daily.areas, function(x) {
@@ -161,16 +168,18 @@ get.daily.pressures <- function(samples) {
   dates <- lapply(samples, function(x) as.integer(x$date))
   out.table <- data.frame(date = sort(unique(unlist(dates))))
   daily.pressures <- lapply(samples, function(x) x$pressure)
-  daily.pressures <- lapply(1:length(daily.pressures), function(x)
+  daily.pressures <- lapply(1:length(daily.pressures), function(x) {
     data.frame(date = dates[[x]], P = daily.pressures[[x]])
-  )
+  })
   # browser()
   if (any(sapply(dates, function(x) any(duplicated(x))))) {
     for (i in 1:length(daily.pressures)) {
-      daily.pressures[[i]] <- daily.pressures[[i]] %>% group_by(date) %>% summarise(mean.P = mean(P))
-      out.table <- out.table %>% left_join(daily.pressures[[i]], by = 'date')
+      daily.pressures[[i]] <- daily.pressures[[i]] %>%
+        group_by(date) %>%
+        summarise(mean.P = mean(P))
+      out.table <- out.table %>% left_join(daily.pressures[[i]], by = "date")
     }
-  out.table <- data.frame(date = out.table[, 1], daily.pressure = rowMeans(out.table[, 2:length(out.table)], na.rm = T))
+    out.table <- data.frame(date = out.table[, 1], daily.pressure = rowMeans(out.table[, 2:length(out.table)], na.rm = T))
   } else {
     # browser()
     # if (sapply(2:ncol(dates), function(x) identical(dates[, 1], dates[, x]))) {
@@ -181,11 +190,13 @@ get.daily.pressures <- function(samples) {
   return(out.table)
 }
 
-get.drift <- function(samples, 
-                      area.ref = NULL, 
-                      type = c("raw.area",
-                               "corrected.area",
-                               "compensated.corrected.area"),
+get.drift <- function(samples,
+                      area.ref = NULL,
+                      type = c(
+                        "raw.area",
+                        "corrected.area",
+                        "compensated.corrected.area"
+                      ),
                       drift.model = c("linear", "quadratic")) {
   # browser()
   type <- match.arg(type)
@@ -205,7 +216,9 @@ get.drift <- function(samples,
     for (i in 2:length(Y)) {
       Y1 <- Y1 %>% dplyr::full_join(Y[[i]], by = "date")
     }
-  } else Y1 <- Y[[1]]
+  } else {
+    Y1 <- Y[[1]]
+  }
   # browser()
   # x <- matrix(unlist(area.ref), ncol = length(unlist(area.ref)), nrow = nrow(Y1), byrow = T)
   # y <- as.matrix(Y1[, -1])
@@ -224,13 +237,15 @@ get.drift <- function(samples,
   x2 <- x1^2
   tt <- list()
   for (i in 1:nrow(Y1)) {
-    if (!all(is.na(Y1[i,-1]))) {
+    if (!all(is.na(Y1[i, -1]))) {
       if (drift.model == "quadratic") {
-        tt[[i]] <- stats::lm(unlist(Y1[i,-1]) ~ x1 + x2, na.action = na.omit)
+        tt[[i]] <- stats::lm(unlist(Y1[i, -1]) ~ x1 + x2, na.action = na.omit)
       } else {
-        tt[[i]] <- stats::lm(unlist(Y1[i,-1]) ~ x1, na.action = na.omit)
+        tt[[i]] <- stats::lm(unlist(Y1[i, -1]) ~ x1, na.action = na.omit)
       }
-    } else tt[[i]] <- list(coefficients = c(NA, NA, NA))
+    } else {
+      tt[[i]] <- list(coefficients = c(NA, NA, NA))
+    }
   }
   # browser()
   icp <- unname(unlist(sapply(tt, function(x) x$coefficients[1])))
@@ -275,9 +290,10 @@ get.compensated.area <- function(sample, P_ref, correction, drift = NULL,
     idx <- 1:nrow(area) %in% unlist(idx)
     date <- date[idx]
     P <- P[idx]
-    area <- area[idx,]
-    if (nrow(area) != nrow(bias.val))
+    area <- area[idx, ]
+    if (nrow(area) != nrow(bias.val)) {
       stop("Script failed at 'get.compensated.area', inconsistent date vectors")
+    }
     # for the sake of completeness:
     # bias must be expanded by measured pressure dependency, however,
     # this does not make much of a difference
@@ -312,9 +328,11 @@ fit.level <- function(Y, P, cmp, area.ref = NULL, family = VGAM::uninormal()) {
   .P <- P
   # d <- data.frame(.P = .P, .Y = .Y)
   # print(head(data))
-  cd_model <- stats::lm(formula = .Y ~ .P,
-                        # data = d,
-                        na.action = na.omit)
+  cd_model <- stats::lm(
+    formula = .Y ~ .P,
+    # data = d,
+    na.action = na.omit
+  )
   cd <- stats::cooks.distance(cd_model)
   otl.crit <- 4 / length(.P)
   idx <- rep(F, nrow(.Y[, ]))
@@ -339,9 +357,11 @@ fit.level <- function(Y, P, cmp, area.ref = NULL, family = VGAM::uninormal()) {
   # se_intercept <- unname(std.errors[idx])
   # se_slope <- unname(std.errors[!idx])
   # vglm
-  fit1 <- VGAM::vglm(formula = .Y ~ 1 + .P,  family = family, # family = VGAM::uninormal(), # family = VGAM::cauchy(),
-                      control = VGAM::vglm.control(maxit = 1000),
-                      na.action = stats::na.omit)
+  fit1 <- VGAM::vglm(
+    formula = .Y ~ 1 + .P, family = family, # family = VGAM::uninormal(), # family = VGAM::cauchy(),
+    control = VGAM::vglm.control(maxit = 1000),
+    na.action = stats::na.omit
+  )
   l <- ncol(.Y)
   idx <- c(is.odd(1:(2 * l)), rep(F, l))
   intercept <- unname(coefficients(fit1)[idx])
@@ -349,11 +369,13 @@ fit.level <- function(Y, P, cmp, area.ref = NULL, family = VGAM::uninormal()) {
   idx <- c(rep(F, 2 * l), rep(T, l))
   slope <- unname(coefficients(fit1)[idx])
   se_slope <- unname(sqrt(diag(vcov(fit1)[idx, idx])))
-  result <- data.frame(peak = cmp,
-                       area.ref = intercept,
-                       slope = slope,
-                       se.area.ref = se_intercept,
-                       se.slope = se_slope)
+  result <- data.frame(
+    peak = cmp,
+    area.ref = intercept,
+    slope = slope,
+    se.area.ref = se_intercept,
+    se.slope = se_slope
+  )
 
   return(fit = result)
 }
