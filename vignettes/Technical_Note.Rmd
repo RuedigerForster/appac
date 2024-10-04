@@ -181,7 +181,7 @@ these ions screen the electrostatic field to some extent and thus slow down the 
 of the ions. Consequently, ions and electrons have more time to recombine and the 
 sensitivity of the detector decreases.
 
-Pressure also affects flame geometry, but in a complicated way. Flame speed $S_L$, i.e. the 
+Pressure affects flame geometry, but in a complicated way. Flame speed $S_L$, i.e. the 
 rate at which the flame front expands, decreases with increasing pressure [8a]. 
 
 $$ S_L (cm/s) = 43[P (atm)]^{-0.5} $$
@@ -189,9 +189,8 @@ At the same time flame stretch, which measures the rate at which the area of a f
 surface grows, increases. In simple words: As the pressure increases, flame height 
 increases and flame width decreases. 
 
-Empirical relation of Flame length $L_f$ of turbulent jet non-premixed flames
-
-$$ L_f = \frac{23 \cdot d_j \cdot \sqrt{\frac{\rho_B}{\rho_L} } }{Y_{B,st}} $$
+<!--  Empirical relation of Flame length $L_f$ of turbulent jet non-premixed flames -->
+<!--  $$ L_f = \frac{23 \cdot d_j \cdot \sqrt{\frac{\rho_B}{\rho_L} } }{Y_{B,st}} $$ -->
 
 When the flame height increases, the flame starts to be partly located inside the collector tube,
 where the electrostatic field strength and the local charge collection efficiency 
@@ -290,11 +289,19 @@ The above also applies to the detector feed gases when controlled by an EPC.
 
 ![Fig. 4. Schematic of a Split/Splitless Inlet (Source: www.agilent.com)][Fig 4.]{width=100%}
 
+<span style="color:red">
+**Question:**  
+The polarity of the collector (positive) in the above plot is opposite to the more common way, 
+where the collector is negatively charged. Can someone please check the polarity of the Agilent FID?
+</span>
+
+
+
 ### Origin of bias
 
 Bias is characterized by the fact that not all measurements in a series belong to 
 the same population, but that several independent populations can be observed over 
-time. This can be visually identified in a plot of measured peak areas over time (i.e. 
+time. This can be visually identified in a plot of measured peak areas vs. pressure (i.e. 
 a local fit). Signs of bias can be a heavy-tailed or skewed distribution of the 
 residuals; in extreme cases several modes can appear, see Fig. 1.
 
@@ -445,7 +452,7 @@ $Y_{ref}(episode)$: the expected area at reference pressure of an episode
 $\overline{Y}_{corr}$: the mean of the pressure corrected areas of the full data set
 
 The calculated bias is subtracted from the measured peak areas to obtain debiased
-raw areas, which are further corrected according to eqn. (7). This returns bias 
+raw areas, which are further corrected according to eq. (7). This returns bias 
 compensated and pressure corrected peak areas $Y_{debias, corr}$. 
 
 Now a first estimate of the drift can be calculated. Daily drift factors $\delta(Y, d)$ 
@@ -473,7 +480,7 @@ Now $Y_{raw,comp}$ is subjected to a pressure fit according to eq. (9) and
 $$dY/dP \sim 0 + Y_{ref} \tag{10b}$$ 
 
 From this stage on, $\kappa$ can be fitted using a linear fit as the p-values show
-that the formerly essential quadratic coefficient is insignificant. Using the 
+that the formerly essential quadratic coefficient is now insignificant. Using the 
 newly obtained value of $\kappa$, the raw areas are corrected according 
 to eq. (7) and then drift is recalculated according to eq. (13) and (14). Repeatedly, 
 corrected and compensated corrected are calculated with raw areas as the input.

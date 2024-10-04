@@ -6,7 +6,7 @@ exportMethods(coefficients, compensatedCorrectedAreas, compensatedRawAreas,
        plotLocalFit, pValues, rawAreas, residualAreas, stdErrors, variance)
 import(mathjaxr, ggplot2, methods, utils)
 importFrom(stats, coefficients, cooks.distance, cor.test, cor, cov, density, 
-           dnorm, lm, na.omit, predict, sd, vcov)
+           dnorm, lm, na.omit, predict, sd, vcov, acf)
 importFrom(data.table, as.IDate)
 importFrom(gridExtra, grid.arrange)
 importFrom(Rbeast, beast123)

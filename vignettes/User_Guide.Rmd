@@ -15,9 +15,12 @@ header-includes:
   - \usepackage[subrefformat=simple]{subfig}
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 options(rmarkdown.html_vignette.check_title = FALSE)
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 ```
 
 ## Introduction
@@ -25,7 +28,7 @@ This document illustrates the usage of the appac package. For a comprehensive ov
 
 The appac package features a main function, which is:
 
-`appac (data, P.ref, appac.control,  appac.colnames)`
+`appac (data, P.ref, appac.colnames, appac.control)`
 
 It is surrounded by several other functions (which are actually methods) that help to retrieve the input and the fitted (output) data.
 
@@ -50,12 +53,10 @@ Each row of the data frame must represent a single peak.
 > **Note:**  
 The user must decide in advance which peaks/components are to be evaluated; only these peaks may be included in the input data frame. Otherwise the data frame must be filtered accordingly before it is passed to the appac function. 
 
-> **Note:**  
 It is important that each of the predetermined peaks from each chromatogram is listed in the data frame. Peaks that have not been integrated or are not present in the sample must be reported as ‘NA’.
 
 
-> **Note:**  
-It is important that report each of the pre-determined peaks from every chromatogram in the data frame. Peaks which have not been integrated or are absent in the sample must be reported as `NA`.
+It is important to report each of the pre-determined peaks from every chromatogram in the data frame. Peaks which have not been integrated or are absent in the sample must be reported as `NA`.
 
 The column headers must be named. The names of the column headers must be passed to the appac function through the list `appac.colnames`.
 
@@ -82,12 +83,8 @@ The package provides a set of methods which allow the user to extract certain in
 #### Results of the atmospheric pressure correction
 
 > **Note:**  
-As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If these names do not comply with the conventions, they are converted to compliant names and a respective warning is issued. To be able to use one of these names in a method, the changed names must be used. 
+As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If these names do not comply with the conventions, they are converted to compliant names and a respective message is issued. To be able to use one of these names in a method, the changed names must be used. (Maybe it is a good idea to provide a conversion function `checkNames` which does this conversion on occasion of a user call instead of doing it inside of a black box. Your opinions, please.)
 
-<span style="color:red">
-**Question:**
-Maybe it is a good idea to provide a conversion function `checkNames` which does this conversion on occasion of a user call instead of doing it inside of a black box. Your opinions, please.
-</span>
 
 The atmospheric pressure correction function fits one parameter, coefficient $\kappa$. The following methods are related to the fitted value of $\kappa$ and return:
 
@@ -186,6 +183,7 @@ x <- appac(data = packed_FID,
 ```
 
 The function has thrown four warnings, the first two of which were to be expected. 
+Two further warnings are issued by the vglm.fitter because it stopped at a half step.
 For the moment, let us ignore these warnings and proceed.
 
 Instead, let us have a look at the plotted output of the global fit.
