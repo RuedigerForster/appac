@@ -26,7 +26,7 @@ atmospheric pressures which prevailed during the sample runs.
 To retreive the \code{\link{Correction}} object inside the \code{\link{Appac}} 
 object \code{X}, type:  \code{X@correction}. 
 }
-\value{a vector of class \code{\link{IDate}} (\code{date}) or a numeric vector (\code{P})}
+\value{a vector of class \code{\link[data.table]{IDate}} (\code{date}) or a numeric vector (\code{P})}
 \note{
 The returned vectors of \code{date} and \code{P} have the same length for a given sample.
 }
