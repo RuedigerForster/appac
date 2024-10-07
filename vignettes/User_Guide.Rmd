@@ -15,12 +15,9 @@ header-includes:
   - \usepackage[subrefformat=simple]{subfig}
 ---
 
-```{r setup, include = FALSE}
+```{r setup, include=FALSE}
 options(rmarkdown.html_vignette.check_title = FALSE)
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Introduction
@@ -28,7 +25,7 @@ This document illustrates the usage of the appac package. For a comprehensive ov
 
 The appac package features a main function, which is:
 
-`appac (data, P.ref, appac.colnames, appac.control)`
+`appac (data, P_ref, appac_control,  appac.colnames)`
 
 It is surrounded by several other functions (which are actually methods) that help to retrieve the input and the fitted (output) data.
 
@@ -36,7 +33,7 @@ The package uses the S4 class system. To familiarize yourself with S4 classes an
 
 ## Input to the appac function
 
-The input consists of a data frame `data`, a numeric value `P.ref`, a list `appac.control` and a list `appac.colnames`.
+The input consists of a data frame `data`, a numeric value `P_ref`, a list `appac_control` and a list `appac.colnames`.
 
 The data frame must contain at least 5 columns, which represent the following information:
 
@@ -53,10 +50,12 @@ Each row of the data frame must represent a single peak.
 > **Note:**  
 The user must decide in advance which peaks/components are to be evaluated; only these peaks may be included in the input data frame. Otherwise the data frame must be filtered accordingly before it is passed to the appac function. 
 
+> **Note:**  
 It is important that each of the predetermined peaks from each chromatogram is listed in the data frame. Peaks that have not been integrated or are not present in the sample must be reported as ‘NA’.
 
 
-It is important to report each of the pre-determined peaks from every chromatogram in the data frame. Peaks which have not been integrated or are absent in the sample must be reported as `NA`.
+> **Note:**  
+It is important that report each of the pre-determined peaks from every chromatogram in the data frame. Peaks which have not been integrated or are absent in the sample must be reported as `NA`.
 
 The column headers must be named. The names of the column headers must be passed to the appac function through the list `appac.colnames`.
 
@@ -67,11 +66,11 @@ Other columns that may exist in the input data frame are discarded. The informat
 * the name (character string) of the Instrument on which the chromatographic analysis was performed
 * the name (character string) of the chromatographic channel to which the measured information relates
 
-`P.ref` is a fixed reference pressure to which the output of the appac function refers. `P.ref` can be set to an arbitrary value which is within the range of the atmospheric pressures of the data set; however, the means of the input data and the output data will then differ. It is therefore recommended to set P.ref to a value near the center of the pressure range. The `median` value is a good estimate.
+`P_ref` is a fixed reference pressure to which the output of the appac function refers. `P_ref` can be set to an arbitrary value which is within the range of the atmospheric pressures of the data set; however, the means of the input data and the output data will then differ. It is therefore recommended to set P_ref to a value near the center of the pressure range. The `median` value is a good estimate.
 
-`appac.control` is a list of some parameters which control the workflow of the function. Currently, the list currently only one item: 
+`appac_control` is a list of some parameters which control the workflow of the function. Currently, the list currently only one item: 
 
-* min.data.points: the minimum number of non-NA data points of a local fit to be considered a valid data point of the global fit, see also internals of the appac function.
+* min_data_points: the minimum number of non-NA data points of a local fit to be considered a valid data point of the global fit, see also internals of the appac function.
 (The list may be expanded in future releases.)
 
 ## Output of the appac function
@@ -83,8 +82,12 @@ The package provides a set of methods which allow the user to extract certain in
 #### Results of the atmospheric pressure correction
 
 > **Note:**  
-As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If these names do not comply with the conventions, they are converted to compliant names and a respective message is issued. To be able to use one of these names in a method, the changed names must be used. (Maybe it is a good idea to provide a conversion function `checkNames` which does this conversion on occasion of a user call instead of doing it inside of a black box. Your opinions, please.)
+As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If these names do not comply with the conventions, they are converted to compliant names and a respective warning is issued. To be able to use one of these names in a method, the changed names must be used. 
 
+<span style="color:red">
+**Question:**
+Maybe it is a good idea to provide a conversion function `checkNames` which does this conversion on occasion of a user call instead of doing it inside of a black box. Your opinions, please.
+</span>
 
 The atmospheric pressure correction function fits one parameter, coefficient $\kappa$. The following methods are related to the fitted value of $\kappa$ and return:
 
@@ -116,7 +119,7 @@ The values of the input data are returned by the following methods.
 * ...
 
 > **Note:**  
-Residual peak areas of type = "compensated.corrected.area" are referenced to area.ref, which is the expected peak area of a component (of a sample) at `P.ref`. Residual peak areas of `type = "raw.area"` and  `type = "corrected.area"` are related to the expected peak areas at pressure `P` of each peak.
+Residual peak areas of type = "compensated.corrected.area" are referenced to area.ref, which is the expected peak area of a component (of a sample) at `P_ref`. Residual peak areas of `type = "raw.area"` and  `type = "corrected.area"` are related to the expected peak areas at pressure `P` of each peak.
 
 
 #### Variances, covariances and correlations
@@ -148,25 +151,28 @@ This is a large data set.
 Now, we need to define the other arguments of the appac function:
 
 ```{r arguments, echo = TRUE}
-## P.ref as the median of the pressure vector
-## use argument na.rm = TRUE in case the pressure vector includes NA
-P.ref <- median(PLOT_FID$air.pressure, na.rm = TRUE)
-
-## define appac.control
-## because packed_FID is a long data set, we may apply a value of 100 to min.data.points
-## without expecting a negative impact on the results
-## you may also try other values
-appac.control <- list(min.data.points = 100, drift.model = "quadratic")
-
 ## define the columns names
 ## use the output of str(packed_FID) to identify the columns
-appac.colnames <- list(
-  sample.col    = "sample.name",
-  peak.col      = "peak.name",
-  date.col      = "injection.date",
-  pressure.col  = "air.pressure",
-  area.col      = "raw.area"
+appac_colnames <- list(
+  sample_col    = "sample.name",
+  peak_col      = "peak.name",
+  date_col      = "injection.date",
+  pressure_col  = "air.pressure",
+  area_col      = "raw.area"
 )
+
+## check column, sample and peak names
+packed_FID <- check_cols(packed_FID, appac_colnames)
+
+## P_ref as the median of the pressure vector
+## use argument na.rm = TRUE in case the pressure vector includes NA
+P_ref <- median(packed_FID$Air_Pressure, na.rm = TRUE)
+
+## define appac_control
+## because packed_FID is a long data set, we may apply a value of 100 to min_data_points
+## without expecting a negative impact on the results
+## you may also try other values
+appac_control <- list(min_data_points = 100, drift_model = "quadratic")
 
 ```
 
@@ -176,26 +182,29 @@ and call the function:
 ## call the appac function
 ## the output is stored in the variable x
 ## please check the warnings carefully
-x <- appac(data = packed_FID, 
-           P.ref = P.ref, 
-           appac.control = appac.control, 
-           appac.colnames = appac.colnames)
+x <- appac(
+  data = packed_FID,
+  P_ref = P_ref,
+  appac_control = appac_control,
+  appac_colnames = appac_colnames
+)
 ```
 
 The function has thrown four warnings, the first two of which were to be expected. 
-Two further warnings are issued by the vglm.fitter because it stopped at a half step.
 For the moment, let us ignore these warnings and proceed.
 
 Instead, let us have a look at the plotted output of the global fit.
 
 ```{r plot_global_fit, echo=TRUE, fig.width=7.2, fig.height=4}
 ## define the color scheme
-colors <- list(highlight_color="orange", lowlight_color="black", 
-               line_color="darkblue", fill_color="lightblue")
+colors <- list(
+  highlight_color = "orange", lowlight_color = "black",
+  line_color = "darkblue", fill_color = "lightblue"
+)
 
 ## plot the output of the appac function
 ## the output has been stored in variable x
-plotGlobalFit(object=x, colors=colors, size=4)
+plotGlobalFit(object = x, colors = colors, size = 4)
 ```
 
 At first sight, this result seems sensible in spite of the warnings thrown by the vglm.fitter. Let us look at 
@@ -219,14 +228,24 @@ be safely ignored.
 Now, let us view the plots of the local fits.
 ```{r plot_local_fits, echo=TRUE, fig.width=7.2, fig.height=8}
 ## define the color scheme
-colors <- list(highlight_color="red", lowlight_color="darkgrey",
-               line_color="darkblue", fill_color="lightblue")
+colors <- list(
+  highlight_color = "red", lowlight_color = "darkgrey",
+  line_color = "darkblue", fill_color = "lightblue"
+)
 
 ## a sample name
 s <- "KGM.11D.4"
 
 peaks <- colnames(x@correction@samples[[s]]$raw.area)
-gridExtra::grid.arrange(grobs = lapply(peaks, function(p) FUN = suppressWarnings(plotLocalFit(object=x, sample=s, peak=p, colors=colors, size=2))), ncol=2)
+gridExtra::grid.arrange(
+  grobs = lapply(peaks, function(p) 
+    suppressWarnings(plotLocalFit(object = x, 
+                                  sample = s, 
+                                  peak = p, 
+                                  colors = colors, 
+                                  size = 2))), 
+  ncol = 2
+)
 ```
 
 What to look out for in these plots?
@@ -248,10 +267,23 @@ Finally, we will have a look at the control charts.
 
 ```{r plot_control_charts, echo=TRUE, fig.width=7.2, fig.height=8}
 ## define the color scheme
-colors <- list(highlight_color="yellow", lowlight_color="darkgrey",
-               line_color="darkblue", fill_color="lightblue")
+colors <- list(
+  highlight_color = "yellow", lowlight_color = "darkgrey",
+  line_color = "darkblue", fill_color = "lightblue"
+)
 
-gridExtra::grid.arrange(grobs = lapply(peaks, function(p) FUN = suppressWarnings(plotControlChart(object=x, sample=s, peak=p, colors=colors, size=2))), ncol=2)
+grobs <- lapply(
+  peaks, function(p) 
+    suppressWarnings(
+      plotControlChart(object = x, 
+                       sample = s, 
+                       peak = p, 
+                       colors = colors, 
+                       size = 2)
+    )
+  )
+
+gridExtra::grid.arrange(grobs = grobs, ncol = 2)
 ```
 
 In order to validate the calculated drift, please check for a trend in the fitted data.

@@ -19,7 +19,7 @@ Method \code{driftFactor} provides a method to calculate drift factors.
     length, or one of them must have length 1.
   }
   \item{date}{
-    a vector of class \code{\link[data.table]{IDate}} which has the same length as
+    a vector of class \code{\link{IDate}} which has the same length as
     \code{area} or length 1.}
   \item{object}{a \code{\link{Drift-class}} object}
 }
@@ -46,26 +46,29 @@ data("PGC_TCD")
 PGC_TCD <- PGC_TCD \%>\% filter(channel == "WLD_RL2")
 
 ## define P.ref as the median of the measured ambient pressures at injection time
-P.ref <- median(PGC_TCD$air.pressure)
+P_ref <- median(PGC_TCD$air.pressure)
 
 ## identify the column names of interest in PGC_TCD
 str(PGC_TCD)
 
 ## define the column names of interest
-appac.colnames <- list(
-  sample.col    = "sample.name",
-  peak.col      = "peak.name",
-  date.col      = "injection.date",
-  pressure.col  = "air.pressure",
-  area.col      = "raw.area"
+appac_colnames <- list(
+  sample_col    = "sample.name",
+  peak_col      = "peak.name",
+  date_col      = "injection.date",
+  pressure_col  = "air.pressure",
+  area_col      = "raw.area"
 )
 
-appac.control <- list(min.data.points = 5, drift.model = "linear")
+## check column, sample and peak names
+PGC_TCD <- check_cols(PGC_TCD, appac_colnames)
+
+appac_control <- list(min_data_points = 5, drift_model = "linear")
 
 x <- suppressWarnings(appac(data = PGC_TCD,
-                            P.ref = P.ref,
-                            appac.control = appac.control,
-                            appac.colnames = appac.colnames))
+                            P_ref = P_ref,
+                            appac_control = appac_control,
+                            appac_colnames = appac_colnames))
 
 ## define a sample of interest
 s <- "X17k"

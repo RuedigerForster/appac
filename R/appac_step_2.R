@@ -1,5 +1,4 @@
-
-appac_step_2 <- function(appac, P.ref, appac.control) {
+appac_step_2 <- function(appac, P_ref, appac_control) {
 
   Correction <- appac@correction
   Drift <- appac@drift
@@ -9,107 +8,144 @@ appac_step_2 <- function(appac, P.ref, appac.control) {
   # local fits:
   #
   # fit area vs P using compensated areas
-  # fit.results: list >> fit.results.table: data.frame
+  # fit_results: list >> fit_results_table: data.frame
   #--------------------------------------------------------
 
-  fit.data <- lapply(seq_along(spls), function(s)
-    data.frame(date = Drift@samples[[s]]$date,
-               P = Drift@samples[[s]]$pressure,
-               Drift@samples[[s]]$compensated.raw.area))
-  fit.results <- lapply(fit.data, function(x) {
-    fit.level(as.matrix(x[, -c(1,2)]), x[, 2] - P.ref, colnames(x)[-c(1,2)], family = VGAM::uninormal()) # VGAM::cauchy()
+  fit_data <- lapply(seq_along(spls), function(s) {
+    data.frame(
+      date = Drift@samples[[s]]$date,
+      P = Drift@samples[[s]]$pressure,
+      Drift@samples[[s]]$compensated.raw.area
+    )
   })
-  names(fit.results) <- spls
-  for (i in seq_along(fit.results)) {
-    fit.results[[i]]$n <- length(fit.data[[i]]$date)
+  fit_results <- lapply(fit_data, function(x) {
+    .fit_level(
+      as.matrix(x[, -c(1, 2)]),
+      x[, 2] - P_ref,
+      colnames(x)[-c(1, 2)],
+      family = VGAM::uninormal()
+    )
+  })
+  names(fit_results) <- spls
+  for (i in seq_along(fit_results)) {
+    fit_results[[i]]$n <- length(fit_data[[i]]$date)
   }
-  fit.results.table <- data.frame(do.call(rbind, fit.results))
-  rownames(fit.results.table) <- NULL
-  Correction@local.fits <- fit.results
+  fit_results_table <- data.frame(do.call(rbind, fit_results))
+  rownames(fit_results_table) <- NULL
+  Correction@local.fits <- fit_results
 
   #----------------------------------------------------------
   # global fit:
   #
   #----------------------------------------------------------
-  fit.data <- data.frame(
-    slope = fit.results.table$slope,
-    area.ref = fit.results.table$area.ref,
-    area.ref2 = fit.results.table$area.ref^2,
-    weight = fit.results.table$n
+  fit_data <- data.frame(
+    slope = fit_results_table$slope,
+    area_ref = fit_results_table$area.ref,
+    area_ref2 = fit_results_table$area.ref^2,
+    weight = fit_results_table$n
   )
 
-  global.fit <- stats::lm(slope ~ 0 + area.ref + area.ref2, data = fit.data, weights = weight)
-  coefficients.global.fit <- coefficients(global.fit)
-  names(coefficients.global.fit) <- c("kappa", "lambda")
-  # p-values
-  p.values.global.fit <- summary(global.fit)$coefficients[,4]
-  names(p.values.global.fit) <- c("kappa", "lambda")
-  # std errors
-  std.err.global.fit <- summary(global.fit)$coefficients[, 2]
-  names(std.err.global.fit) <- c("kappa", "lambda")
-  Correction@global.fit <- list(
-    coefficients = coefficients.global.fit,
-    p.values = p.values.global.fit,
-    standard.errors = std.err.global.fit,
-    P.ref = P.ref
+  global_fit <- stats::lm(
+    slope ~ 0 + area_ref + area_ref2,
+    data = fit_data,
+    weights = weight
   )
-  # rm(list = c("fit.data", "fit.results", "fit.results.table", "global.fit"))
+  coefficients_global_fit <- coefficients(global_fit)
+  names(coefficients_global_fit) <- c("kappa", "lambda")
+  # p-values
+  p_values <- summary(global_fit)$coefficients[, 4]
+  names(p_values) <- c("kappa", "lambda")
+  # std errors
+  std_err <- summary(global_fit)$coefficients[, 2]
+  names(std_err) <- c("kappa", "lambda")
+  Correction@global.fit <- list(
+    coefficients = coefficients_global_fit,
+    p.values = p_values,
+    standard.errors = std_err,
+    P_ref = P_ref
+  )
 
   # #----------------------------------------------------------
-  # # set area.ref to the expected values obtained from global.fit
+  # # set area_ref to the expected values obtained from global_fit
   # # and refit slope
   # #----------------------------------------------------------
-  slope <- stats::predict(global.fit)
-  a <- coefficients.global.fit[1] / coefficients.global.fit[2] / 2
+  slope <- stats::predict(global_fit)
+  a <- coefficients_global_fit[1] / coefficients_global_fit[2] / 2
   if (a < 0) {
-    area.ref <- sqrt(abs(slope / coefficients.global.fit[2] - a^2)) + a
+    area_ref <- sqrt(abs(slope / coefficients_global_fit[2] - a^2)) + a
   } else {
-    area.ref <- sqrt(abs(slope / coefficients.global.fit[2] + a^2)) - a
+    area_ref <- sqrt(abs(slope / coefficients_global_fit[2] + a^2)) - a
   }
 
   #----------------------------------------------------------
   # recalculate corrected + expected area
   #----------------------------------------------------------
   for (i in spls) {
-    peak <- colnames(Correction@samples[[i]]$raw.area)
-    area.ref <- Correction@local.fits[[i]]$area.ref
-    P <- P(object =  Correction, sample = i)
-    date <- dates(object =  Correction, sample = i)
-    area <- rawAreas(object =  Correction, sample = i)
+    P <- P(object = Correction, sample = i)
+    area <- rawAreas(object = Correction, sample = i)
     aref <- Correction@local.fits[[i]]$area.ref
-    expected.area <- get.expected.area(P = P, aref = aref, P_ref = P.ref, coefficients = coefficients.global.fit)
-    corrected.area <- get.corrected.area(area = area, P = P, P_ref = P.ref, coefficients.global.fit)
-    Correction@samples[[i]]$corrected.area <- corrected.area
-    Correction@samples[[i]]$expected.area <- expected.area
-    colnames(Correction@samples[[i]]$corrected.area) <- colnames(Correction@samples[[i]]$raw.area)
-    colnames(Correction@samples[[i]]$expected.area) <- colnames(Correction@samples[[i]]$raw.area)
+    expected_area <- .get_expected_area(
+      P = P,
+      aref = aref,
+      pref = P_ref,
+      coefficients = coefficients_global_fit
+    )
+    corrected_area <- .get_corrected_area(
+      area = area,
+      P = P,
+      pref = P_ref,
+      coefficients_global_fit
+    )
+    Correction@samples[[i]]$corrected.area <- corrected_area
+    Correction@samples[[i]]$expected.area <- expected_area
+    colnames(Correction@samples[[i]]$corrected.area) <-
+      colnames(Correction@samples[[i]]$raw.area)
+    colnames(Correction@samples[[i]]$expected.area) <-
+      colnames(Correction@samples[[i]]$raw.area)
   }
 
   #----------------------------------------------------------
   # recalculate drift
   #----------------------------------------------------------
-  area.ref <- lapply(Correction@local.fits, function(x) x$area.ref)
-  drift.data <- get.drift(samples = Correction@samples, 
-                          area.ref = area.ref,
-                          type = "corrected.area", 
-                          drift.model = appac.control$drift.model) # "linear") # , area.ref = area.ref "corrected.area"
-  Drift@drift.factors <- drift.data$drift
+  area_ref <- lapply(Correction@local.fits, function(x) x$area.ref)
+  drift_data <- .get_drift(
+    samples = Correction@samples,
+    area_ref = area_ref,
+    type = "corrected.area",
+    drift_model = appac_control$drift_model
+  )
+  Drift@drift.factors <- drift_data$drift
 
-  compensated.raw.areas <- lapply(spls, function(x)
-    get.compensated.area(x, P_ref = P.ref, drift = Drift, correction = Correction, type = "raw.area", debias = FALSE)
-  )
-  compensated.corrected.areas <- lapply(spls, function(x)
-    get.compensated.area(x, P_ref = P.ref, drift = Drift, correction = Correction, type = "corrected.area", debias = FALSE)
-  )
-  for (i in seq_along(compensated.raw.areas)) {
+  compensated_raw_areas <- lapply(spls, function(x) {
+    .get_compensated_area(
+      x,
+      P_ref = P_ref,
+      drift = Drift,
+      correction = Correction,
+      type = "raw.area",
+      debias = FALSE
+    )
+  })
+  compensated_corrected_areas <- lapply(spls, function(x) {
+    .get_compensated_area(
+      x,
+      P_ref = P_ref,
+      drift = Drift,
+      correction = Correction,
+      type = "corrected.area",
+      debias = FALSE
+    )
+  })
+  for (i in seq_along(compensated_raw_areas)) {
     Drift@samples[[i]] <- list(
-      date = compensated.raw.areas[[i]]$date,
-      pressure = compensated.raw.areas[[i]]$P,
-      compensated.raw.area = as.matrix(compensated.raw.areas[[i]][, -c(1, 2)]))
-    Correction@samples[[i]]$compensated.corrected.area <- as.matrix(compensated.corrected.areas[[i]][, -c(1, 2)])
+      date = compensated_raw_areas[[i]]$date,
+      pressure = compensated_raw_areas[[i]]$P,
+      compensated.raw.area = as.matrix(compensated_raw_areas[[i]][, -c(1, 2)])
+    )
+    Correction@samples[[i]]$compensated.corrected.area <-
+      as.matrix(compensated_corrected_areas[[i]][, -c(1, 2)])
   }
-  names(Drift@samples) <- names(compensated.raw.areas) <- spls
+  names(Drift@samples) <- names(compensated_raw_areas) <- spls
 
   return(methods::new("Appac", drift = Drift, correction = Correction))
 }
-

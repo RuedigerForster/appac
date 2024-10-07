@@ -16,14 +16,14 @@ response is linearized in the output.
 }
 \usage{
 appac ( data,
-        P.ref = 1013.25,
-        appac.colnames = list(sample.col = NA,
-                              peak.col = NA,
-                              date.col = NA,
-                              pressure.col = NA,
-                              area.col = NA),
-        appac.control  = list(min.data.points = 50,
-                              drift.model = c("linear", "quadratic"))
+        P_ref = 1013.25,
+        appac_colnames = list(sample_col = NA,
+                              peak_col = NA,
+                              date_col = NA,
+                              pressure_col = NA,
+                              area_col = NA),
+        appac_control  = list(min_data_points = 50,
+                              drift_model = c("linear", "quadratic"))
       )
 }
 \arguments{
@@ -31,32 +31,32 @@ appac ( data,
     a data frame containing daily repetitive measurements of one or more samples
     from a single GC channel.
   }
-  \item{P.ref}{
+  \item{P_ref}{
     numeric. The atmospheric pressure (in hPa) to which the instrument response
     is corrected. Any arbitrary pressure within the üressure range of the data 
     set may be chosen; however, in this case the means of the input and the 
     output areas will differ. It is recommended to choose the median of the 
     pressure measurements of the dataset.
   }
-  \item{appac.colnames}{
-  a list of column names of \code{df}, which contain the following information:
+  \item{appac_colnames}{
+  a list of column names of \code{data}, which contain the following information:
 	    \itemize{
-	      \item \code{sample.col}: character. The name of the column containing 
+	      \item \code{sample_col}: character. The name of the column containing 
 	      the names of the samples
-	      \item \code{peak.col}: character. The name of the column containing the 
+	      \item \code{peak_col}: character. The name of the column containing the 
 	      names of the peaks
-	      \item \code{pressure.col}: character. The name of the column containing 
+	      \item \code{pressure_col}: character. The name of the column containing 
 	      the measured atmospheric pressures
-	      \item \code{area.col}: character. The name of the column containing the
+	      \item \code{area_col}: character. The name of the column containing the
 	      measured peak areas
       }
   }
-  \item{appac.control}{
+  \item{appac_control}{
     a list of the control elements which determine how the data are processed.
 	    \itemize{
-	      \item \code{min.data.points}: integer(>0). The minimum number of data
+	      \item \code{min_data_points}: integer(>0). The minimum number of data
 	      points belonging to a peak from which an episode is analysed.
-	    	\item \code{drift.model}: character. Experimental feature, determines how drift is modeled.
+	    	\item \code{drift_model}: character. Experimental feature, determines how drift is modeled.
 	   }
   }
 %%  \item{\dots}{additional parameters. Currently not in use.}
@@ -79,38 +79,45 @@ more than two evaluated peaks are highly recommended.
 \value{
 an object of class \code{\link{Appac}}
 }
-
+\seealso{
+\code{\link{check_cols}}
+}
 \section{Warning}{....}
 
 \examples{
-## Please be patient, the calculation takes a while.
-
 ## Not run:
-library(appac)
 
-## PLOT_FID is a long dataset of daily measurements of 5 control samples taken on
-## a dedicated natural gas analyzer.
+library(dplyr)
+
+## PGC_TCD is a short dataset of weekly measurements of 1 control sample taken on
+## a dedicated process gas chromatograph. It contains more than one channel, so 
+## the data.frame must be filtered.
 data("PGC_TCD")
-
-## define P.ref as the median of the measured ambient pressures at injection time
-## data set contains some NA, because of missing peaks
-P.ref <- median(PGC_TCD$air.pressure, na.rm = TRUE)
+PGC_TCD <- PGC_TCD \%>\% filter(channel == "WLD_RL2")
 
 ## define the column names of the dataset
-appac.colnames <- list(
-  sample.col    = "sample.name",
-  peak.col      = "peak.name",
-  date.col      = "injection.date",
-  pressure.col  = "air.pressure",
-  area.col      = "raw.area"
+appac_colnames <- list(
+  sample_col    = "sample.name",
+  peak_col      = "peak.name",
+  date_col      = "injection.date",
+  pressure_col  = "air.pressure",
+  area_col      = "raw.area"
 )
 
-appac.control <- list(min.data.points = 5, drift.model = "linear")
+## check column, sample and peak names
+PGC_TCD <- check_cols(PGC_TCD, appac_colnames)
+
+## define P_ref as the median of the measured ambient pressures at injection time
+## data set contains some NA, because of missing peaks
+P_ref <- median(PGC_TCD$Air_Pressure, na.rm = TRUE)
+
+
+appac_control <- list(min_data_points = 5, drift_model = "linear")
 
 ## appac will throw warnings that sample and peak names have been changed
-x <- appac(data = PGC_TCD, P.ref = P.ref, 
-           appac.colnames = appac.colnames,
-           appac.control = appac.control)
+x <- appac(data = PGC_TCD, P_ref = P_ref, 
+           appac_colnames = appac_colnames,
+           appac_control = appac_control)
 
 ## view results
 print(paste("Air pressure correction coefficient (kappa):", 
@@ -119,6 +126,6 @@ print(paste("Air pressure correction coefficient (kappa):",
 ## plot the fit
 colors <- list(highlight_color="black", lowlight_color="darkgrey", 
                line_color="darkblue", fill_color="lightblue")
-plotGlobalFit(x, size = 2, colors)
+plotGlobalFit(object = x, size = 2, colors = colors)
 
 }
