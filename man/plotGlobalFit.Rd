@@ -86,8 +86,7 @@ appac_control <- list(min_data_points = 5, drift_model = "linear")
 x <- suppressWarnings(
        appac(data = PGC_TCD,
        P_ref = P_ref,
-       appac_control = appac_control,
-       appac_colnames = appac_colnames)
+       appac_control = appac_control)
      )
 
 ## View results

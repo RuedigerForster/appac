@@ -14,3 +14,11 @@
 
 * linted code (thanks se-wo), bug fixes (thanks JackyLe), 
 plots have default size and colors (as suggested by JackyLe)
+
+# appac 0.2.1
+
+* additional plot features: 
+show breakpoints in Control Chart,
+bug fix: lines for warning and intervention limits are correctly at 2 and 3 std deviations,
+outliers plot in faint color in plotControlCharts
+removed argument appac_colnames from appac() function; running check_cols is a must now                

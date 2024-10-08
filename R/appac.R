@@ -2,18 +2,20 @@
 appac <- function(
   data,
   P_ref = 1013.25,
-  appac_colnames = list(
-    sample_col = NA,
-    peak_col = NA,
-    date_col = NA,
-    pressure_col = NA,
-    area_col = NA
-  ),
   appac_control = list(
     min_data_points = 50,
     drift_model = c("linear", "quadratic")
   )
 ) {
+  
+  # appac_colnames = list(
+  #   sample_col = NA,
+  #   peak_col = NA,
+  #   date_col = NA,
+  #   pressure_col = NA,
+  #   area_col = NA
+  # ),
+  
 
   if (missing(data)) {
     stop("Input 'data' is missing")

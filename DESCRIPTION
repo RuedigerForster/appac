@@ -1,7 +1,7 @@
 Package: appac
 Type: Package
 Title: Atmospheric Pressure Peak Area Correction
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: c(
     person(given = "Rüdiger", family = "Forster", role = c("aut","cre"), 
     email = "ruediger.forster0212@gmail.com", 
@@ -41,3 +41,4 @@ Collate:
     'appac_step_2.R'
     'appac_step_3.R'
     'appac.R'
+    'checks.R'

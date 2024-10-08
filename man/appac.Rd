@@ -17,11 +17,6 @@ response is linearized in the output.
 \usage{
 appac ( data,
         P_ref = 1013.25,
-        appac_colnames = list(sample_col = NA,
-                              peak_col = NA,
-                              date_col = NA,
-                              pressure_col = NA,
-                              area_col = NA),
         appac_control  = list(min_data_points = 50,
                               drift_model = c("linear", "quadratic"))
       )
@@ -33,19 +28,19 @@ appac ( data,
   }
   \item{P_ref}{
     numeric. The atmospheric pressure (in hPa) to which the instrument response
-    is corrected. Any arbitrary pressure within the üressure range of the data 
-    set may be chosen; however, in this case the means of the input and the 
-    output areas will differ. It is recommended to choose the median of the 
+    is corrected. Any arbitrary pressure within the üressure range of the data
+    set may be chosen; however, in this case the means of the input and the
+    output areas will differ. It is recommended to choose the median of the
     pressure measurements of the dataset.
   }
   \item{appac_colnames}{
   a list of column names of \code{data}, which contain the following information:
 	    \itemize{
-	      \item \code{sample_col}: character. The name of the column containing 
+	      \item \code{sample_col}: character. The name of the column containing
 	      the names of the samples
-	      \item \code{peak_col}: character. The name of the column containing the 
+	      \item \code{peak_col}: character. The name of the column containing the
 	      names of the peaks
-	      \item \code{pressure_col}: character. The name of the column containing 
+	      \item \code{pressure_col}: character. The name of the column containing
 	      the measured atmospheric pressures
 	      \item \code{area_col}: character. The name of the column containing the
 	      measured peak areas
@@ -65,8 +60,10 @@ appac ( data,
 Sample and peak names in the input data frame are used as variables in the code
 and thus should comply to \bold{R} naming conventions. A valid variable name must
 start with a letter and may contain letters, digits, period(.) and
-underscore(_). If this is not the case, non-complying names will be converted
-and a warning will be thrown.
+underscore(_).
+
+Function \code{\link{check_cols}} prepares a data frame so that it can be used with
+\code{appac}.
 
 Dates in the input dataframe must comply to the format \code{\%Y-\%m-\%d}.
 See \code{\link{strptime}} for further information.
@@ -90,7 +87,7 @@ an object of class \code{\link{Appac}}
 library(dplyr)
 
 ## PGC_TCD is a short dataset of weekly measurements of 1 control sample taken on
-## a dedicated process gas chromatograph. It contains more than one channel, so 
+## a dedicated process gas chromatograph. It contains more than one channel, so
 ## the data.frame must be filtered.
 data("PGC_TCD")
 PGC_TCD <- PGC_TCD \%>\% filter(channel == "WLD_RL2")
@@ -104,6 +101,9 @@ appac_colnames <- list(
   area_col      = "raw.area"
 )
 
+## default column names are contained in global variable column_names:
+column_names
+
 ## check column, sample and peak names
 PGC_TCD <- check_cols(PGC_TCD, appac_colnames)
 
@@ -111,20 +111,18 @@ PGC_TCD <- check_cols(PGC_TCD, appac_colnames)
 ## data set contains some NA, because of missing peaks
 P_ref <- median(PGC_TCD$Air_Pressure, na.rm = TRUE)
 
-
 appac_control <- list(min_data_points = 5, drift_model = "linear")
 
 ## appac will throw warnings that sample and peak names have been changed
-x <- appac(data = PGC_TCD, P_ref = P_ref, 
-           appac_colnames = appac_colnames,
+x <- appac(data = PGC_TCD, P_ref = P_ref,
            appac_control = appac_control)
 
 ## view results
-print(paste("Air pressure correction coefficient (kappa):", 
+print(paste("Air pressure correction coefficient (kappa):",
       sprintf("\%.3e", coefficients(x@correction)), "[1/hPa]"))
 
 ## plot the fit
-colors <- list(highlight_color="black", lowlight_color="darkgrey", 
+colors <- list(highlight_color="black", lowlight_color="darkgrey",
                line_color="darkblue", fill_color="lightblue")
 plotGlobalFit(object = x, size = 2, colors = colors)
 

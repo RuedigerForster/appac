@@ -52,3 +52,4 @@ histogram_plot_theme <- function(size = 4) {
 
 x <- NULL
 y <- NULL
+

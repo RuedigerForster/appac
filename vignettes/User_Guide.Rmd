@@ -185,8 +185,7 @@ and call the function:
 x <- appac(
   data = packed_FID,
   P_ref = P_ref,
-  appac_control = appac_control,
-  appac_colnames = appac_colnames
+  appac_control = appac_control
 )
 ```
 

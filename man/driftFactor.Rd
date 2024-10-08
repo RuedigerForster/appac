@@ -24,8 +24,8 @@ Method \code{driftFactor} provides a method to calculate drift factors.
   \item{object}{a \code{\link{Drift-class}} object}
 }
 \details{
-The drift factor is a function of the corrected peak area. To retrieve the 
-correct drift factors, the argument must be of the type \code{correctedAreas()}. 
+The drift factor is a function of the corrected peak area. To retrieve the
+correct drift factors, the argument must be of the type \code{correctedAreas()}.
 See Examples.
 }
 \value{
@@ -67,8 +67,7 @@ appac_control <- list(min_data_points = 5, drift_model = "linear")
 
 x <- suppressWarnings(appac(data = PGC_TCD,
                             P_ref = P_ref,
-                            appac_control = appac_control,
-                            appac_colnames = appac_colnames))
+                            appac_control = appac_control))
 
 ## define a sample of interest
 s <- "X17k"
@@ -84,7 +83,7 @@ a <- correctedAreas(sample = s, object = x@correction)
 
 ## get the drift factors for all peaks of s
 f <- driftFactor (area = a, date = d, object = x@drift)
-plot(d, a[, 1] / f[, 1], ylim = c(1329000, 1360200), pch = 19, col = "blue", 
+plot(d, a[, 1] / f[, 1], ylim = c(1329000, 1360200), pch = 19, col = "blue",
      xlab = "date", ylab = "drift corrected area")
 points(d, a[, 2] / f[, 2], pch = 19, col = "green")
 }

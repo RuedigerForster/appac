@@ -13,7 +13,7 @@ Get the atmospheric pressure correction peak area correction (APPAC) coefficient
 }
 \description{
 Method \code{coefficients} provides a means to retrieve the calculated correction coefficient.
-The standard error of the coefficient can be retrieved by calling the method 
+The standard error of the coefficient can be retrieved by calling the method
 \code{stdErrors}, the p-Values of the calculated coefficient by calling \code{pValues}.
 }
 \usage{
@@ -67,8 +67,7 @@ appac_control <- list(min_data_points = 5, drift_model = "linear")
 ## appac will throw warnings that sample and peak names have been changed
 x <- suppressWarnings(appac(data = PGC_TCD,
                             P_ref = P_ref,
-                            appac_control = appac_control,
-                            appac_colnames = appac_colnames))
+                            appac_control = appac_control))
 coefficients(x@correction)
 stdErrors(x@correction)
 pValues(x@correction)

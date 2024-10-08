@@ -87,10 +87,9 @@
     show.compensated.areas = TRUE,
     plot.residuals = TRUE,
     bins = 50) {
-
+  # check colors; this error should never occur
   if (any(is.na(colors)))
     stop("Colors missing in arguments")
-
   title <- "Local Fit"
   subtitle <- paste(sample, "-", peak)
   xlab <- "atmospheric pressure (hPa)"
@@ -100,13 +99,14 @@
   y1 <- rawAreas(object = data@correction, sample = sample)[, peak]
   y2 <- compensatedRawAreas(object = data@drift, sample = sample)[, peak]
   # outliers
-  outliers <- NULL
-  if (!is.null(outliers)) {
-    subset <- ifelse(outliers, 2, 1)
+  outliers <- .has_outliers(data@correction, sample, sig.level = "0.05")
+  if (!is.null(outliers) && outliers$check[peak]) {
+    s <- ifelse(outliers$outliers[, peak], 2, 1)
   } else {
-    subset <- rep(1, length(dates))
+    s <- rep(1, length(dates))
   }
-  X <- data.frame(x = x, y1 = y1, y2 = y2, s = subset)
+  X <- data.frame(x = x, y1 = y1, y2 = y2, s = s)
+  std_dev <- sd(X[, 3])
   aref <- X(data@correction)[[sample]]
   slop <- Y(data@correction)[[sample]]
   idx <- names(aref) == peak
@@ -118,10 +118,10 @@
   span <- 0.025 * aref
   l.y.limit <- aref - span
   h.y.limit <- aref + span
-  p1 <- ggplot(X) +
+  p1 <- ggplot(na.omit(X)) +
     # raw areas
     geom_point(
-      data = na.omit(X), mapping = aes(x = x, y = y1),
+      mapping = aes(x = x, y = y1),
       color = colors$lowlight_color,
       size = 1,
       alpha = 1,
@@ -132,11 +132,13 @@
     p1 <- p1 +
       geom_point(
         data = X,
-        mapping = aes(x = x, y = y2),
+        mapping = aes(x = x, y = y2, alpha = s),
         color = colors$highlight_color,
         size = 1,
-        shape = 20,
-        alpha = 0.5
+        shape = 20
+      ) +
+      scale_alpha(
+        range = c(1, 0.01)
       )
   }
   p1 <- p1 +
@@ -175,14 +177,7 @@
   )[, peak]
   l.y.limit <- -span / 2.5
   h.y.limit <- span / 2.5
-  # outliers
-  outliers <- NULL
-  if (!is.null(outliers)) {
-    subset <- ifelse(outliers, 2, 1)
-  } else {
-    subset <- rep(1, length(dates))
-  }
-  Z <- as.data.frame(cbind(x = x, y1 = y1, y2 = y2, s = subset))
+  Z <- as.data.frame(cbind(x = x, y1 = y1, y2 = y2, s = s))
   binwidth <- (max(Z[, 2], na.rm = TRUE) - min(Z[, 2], na.rm = TRUE)) / bins
   p2 <- ggplot(Z) +
     # raw areas
@@ -199,11 +194,13 @@
     p2 <- p2 +
       geom_point(
         data = Z,
-        mapping = aes(x = x, y = y2),
+        mapping = aes(x = x, y = y2, alpha = s),
         color = colors$highlight_color,
         size = 1,
-        shape = 20,
-        alpha = 0.5
+        shape = 20
+      ) +
+      scale_alpha(
+        range = c(1, 0.01)
       )
   }
   p2 <- p2 +
@@ -211,6 +208,30 @@
       aes(yintercept = 0),
       color = colors$line_color,
       linetype = "dashed",
+      linewidth = 1
+    ) +
+    geom_hline(
+      yintercept = 2 * std_dev,
+      linetype = "dotted",
+      color = colors$line_color,
+      linewidth = 1
+    ) +
+    geom_hline(
+      yintercept = -2 * std_dev,
+      linetype = "dotted",
+      color = colors$line_color,
+      linewidth = 1
+    ) +
+    geom_hline(
+      yintercept = 3 * std_dev,
+      linetype = "dashed",
+      color = colors$line_color,
+      linewidth = 1
+    ) +
+    geom_hline(
+      yintercept = -3 * std_dev,
+      linetype = "dashed",
+      color = colors$line_color,
       linewidth = 1
     ) +
     labs(
@@ -281,6 +302,7 @@
 }
 
 
+
 .plot_control_chart <- function(
     data = NA,
     sample = NA,
@@ -293,6 +315,7 @@
     ),
     size = 4,
     show.compensated.areas = TRUE,
+    show.breakpoints = TRUE,
     plot.residuals = TRUE,
     bins = 50) {
 
@@ -311,16 +334,16 @@
     sample = sample
   )[, peak]
   # outliers
-  outliers <- NULL
-  if (!is.null(outliers)) {
-    subset <- ifelse(outliers, 2, 1)
+  outliers <- .has_outliers(data@correction, sample, sig.level = "0.05")
+  if (!is.null(outliers) && outliers$check[peak]) {
+    s <- ifelse(outliers$outliers[, peak], 2, 1)
   } else {
-    subset <- rep(1, length(dates))
+    s <- rep(1, length(dates))
   }
   # plot data
-  X <- data.frame(x = x, y1 = y1, y2 = y2, s = subset)
+  X <- data.frame(x = x, y1 = y1, y2 = y2, s = s)
   X[, 1] <- as.Date(X[, 1], origin = "1970-01-01")
-  std.dev <- sd(X[, 3])
+  std_dev <- sd(X[, 3])
   # plot margins
   aref <- X(data@correction)[[sample]]
   idx <- names(aref) == peak
@@ -347,11 +370,13 @@
     p1 <- p1 +
       geom_point(
         data = X,
-        mapping = aes(x = x, y = y2),
+        mapping = aes(x = x, y = y2, alpha = s),
         color = colors$highlight_color,
-        size = 2,
-        shape = 20,
-        alpha = 1
+        size = 1,
+        shape = 20
+      ) +
+      scale_alpha(
+        range = c(1, 0.01)
       )
   }
   p1 <- p1 +
@@ -372,25 +397,25 @@
       linewidth = 1
     ) +
     geom_hline(
-      yintercept = aref + std.dev,
+      yintercept = aref + 2 * std_dev,
       linetype = "dotted",
       color = colors$line_color,
       linewidth = 1
     ) +
     geom_hline(
-      yintercept = aref - std.dev,
+      yintercept = aref - 2 * std_dev,
       linetype = "dotted",
       color = colors$line_color,
       linewidth = 1
     ) +
     geom_hline(
-      yintercept = aref + 2 * std.dev,
+      yintercept = aref + 3 * std_dev,
       linetype = "dashed",
       color = colors$line_color,
       linewidth = 1
     ) +
     geom_hline(
-      yintercept = aref - 2 * std.dev,
+      yintercept = aref - 3 * std_dev,
       linetype = "dashed",
       color = colors$line_color,
       linewidth = 1
@@ -398,7 +423,12 @@
     main_plot_theme(
       size = size
     )
-  #sapply(bpts, function(a) geom_vline(xintercept=a, linetype = "dotted", color = line_color, linewidth = 1))
+  # breakpoints
+  if (show.breakpoints) {
+    bpts <- data@correction@samples[[sample]]$breakpoints
+    p1 <- p1 +
+      sapply(bpts, function(a) geom_vline(xintercept=a, linetype = "dotted", color = colors$line_color, linewidth = 0.5))
+  }
   #
   # residuals
   ylab <- "residuals"
@@ -415,14 +445,7 @@
   )[, peak] - aref
   l.y.limit <- -span / 2.5
   h.y.limit <- span / 2.5
-  # outliers
-  outliers <- NULL
-  if (!is.null(outliers)) {
-    subset <- ifelse(outliers, 2, 1)
-  } else {
-    subset <- rep(1, length(x))
-  }
-  Z <- as.data.frame(cbind(x = x, y1 = y1, y2 = y2, s = subset))
+  Z <- as.data.frame(cbind(x = x, y1 = y1, y2 = y2, s = s))
   Z[, 1] <- as.Date(Z[, 1], origin = "1970-01-01")
   binwidth <- (max(Z[, 2], na.rm = TRUE) - min(Z[, 2], na.rm = TRUE)) / bins
   p2 <- ggplot(Z) +
@@ -441,7 +464,7 @@
       x = xlab,
       y = ylab
     ) +
-    ylim(#
+    ylim(
       l.y.limit,
       h.y.limit
     ) +
@@ -454,11 +477,13 @@
     p2 <- p2 +
       geom_point(
         data = Z,
-        mapping = aes(x = x, y = y2),
+        mapping = aes(x = x, y = y2, alpha = s),
         color = colors$highlight_color,
         size = 1,
-        shape = 20,
-        alpha = 0.5
+        shape = 20
+      ) +
+      scale_alpha(
+        range = c(1, 0.01)
       )
   }
   p2 <- p2 +
@@ -471,6 +496,12 @@
     residuals_plot_theme(
       size = size
     )
+  # breakpoints
+  if (show.breakpoints) {
+    bpts <- data@correction@samples[[sample]]$breakpoints
+    p2 <- p2 +
+      sapply(bpts, function(a) geom_vline(xintercept=a, linetype = "dotted", color = colors$line_color, linewidth = 0.5))
+  }
   # histogram of residuals
   p3 <- ggplot(data = na.omit(Z), mapping = aes(x = y1)) +
     geom_histogram(
