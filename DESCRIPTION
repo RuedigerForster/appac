@@ -6,10 +6,12 @@ Authors@R: c(
     person(given = "Rüdiger", family = "Forster", role = c("aut","cre"), 
     email = "ruediger.forster0212@gmail.com", 
     comment = c(ORCID = "0009-0006-4851-7430")),
-    person(given = "Erik", family = "van der Werff", role = c("aut"), 
-    email = "erik.v.d.werff@qualimetric.nl"))
-Author: Rüdiger Forster [aut, cre] (<https://orcid.org/0009-0006-4851-7430>), 
-    Erik van der Werff [aut]
+    person(given = "Jaqueline", family = "Leddin", role = "ctb", 
+    email = "jaqueline.leddin@uni-due.de"),
+    person(given = "Sebastian", family = "Wolters", role = "ctb"))
+Author: Rüdiger Forster [aut, cre] (<https://orcid.org/0009-0006-4851-7430>),
+    Jaqueline Leddin [ctb],
+    Sebastian Wolter [ctb]
 Maintainer: Rüdiger Forster  <ruediger.forster0212@gmail.com>
 Description: Correct the effect that atmospheric pressure has on the response of 
     FID and TCD in gas chromatography. Compensate instrumental drift and linearize

@@ -24,7 +24,7 @@ part of the \code{\link{appac}} function.
   \describe{
     \item{\code{driftFactor}:}{\code{signature (
       object = "Drift", date = "IDate", area = "matrix" )}
-    } 
+    }
   }
 }
 
@@ -35,6 +35,10 @@ part of the \code{\link{appac}} function.
 \examples{
 ## view class
 showClass("Drift")
+## view slots
+getSlots("Drift")
+## view methods
+attr(.S4methods(class = "Drift"), "info")$generic
 }
 
 \keyword{classes}

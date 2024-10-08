@@ -23,22 +23,9 @@ result elements of the \code{\link{appac}} function.
 
 \section{Methods}{
   \describe{
-    \item{\code{plotGlobalFit}:}{\code{signature (
-            object = "Appac",
-            colors = "list")}
-    }
-    \item{\code{plotLocalFit}:}{\code{signature (
-            object = "Appac",
-            sample = "character",
-            peak = "character",
-            colors = "list" )}
-    }
-    \item{\code{plotControlChart}:}{\code{signature (
-            object = "Appac",
-            sample = "character",
-            peak = "character",
-            colors = "list" )}
-    }
+    \item{\code{plotGlobalFit}:}{\code{signature(object = "Appac")}}
+    \item{\code{plotLocalFit}:}{\code{signature(object = "Appac", sample = "character", peak = "character")}}
+    \item{\code{plotControlChart}:}{\code{signature (object = "Appac", sample = "character", peak = "character")}}
   }
 }
 \seealso{
@@ -48,7 +35,10 @@ result elements of the \code{\link{appac}} function.
 \examples{
 ## view class
 showClass("Appac")
+## view slots
 getSlots("Appac")
+## view methods
+attr(.S4methods(class = "Appac"), "info")$generic
 }
 
 \keyword{classes}

@@ -12,4 +12,5 @@
 
 # appac 0.2.0
 
-* linted code, added breakpoints to plot, added outliers to plot, added performance
+* linted code (thanks se-wo), bug fixes (thanks JackyLe), 
+plots have default size and colors (as suggested by JackyLe)

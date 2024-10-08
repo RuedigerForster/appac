@@ -23,7 +23,7 @@ pressure correction part of the \code{\link{appac}} function.
   \describe{
     \item{\code{coefficients}:}{\code{signature(
       object = "Correction", ...  )}
-    } 
+    }
     \item{\code{stdErrors}:}{\code{signature(
       object = "Correction", ... )}
     }
@@ -52,19 +52,19 @@ pressure correction part of the \code{\link{appac}} function.
       object = "Correction", sample = "character" )}
     }
     \item{\code{residualAreas}:}{\code{signature(
-      object = "Correction", sample = "character", 
+      object = "Correction", sample = "character",
       type= c("raw.area", "corrected.area", "compensated.corrected.area") )}
     }
     \item{\code{variance}:}{\code{signature(
-      object = "Correction", sample = "character", 
+      object = "Correction", sample = "character",
       type= c("raw.area", "corrected.area", "compensated.corrected.area") )}
     }
     \item{\code{covMatrix}:}{\code{signature(
-      object = "Correction", sample = "character", 
+      object = "Correction", sample = "character",
       type= c("raw.area", "compensated.corrected.area") )}
     }
     \item{\code{corMatrix}:}{\code{signature(
-      object = "Correction", sample = "character", 
+      object = "Correction", sample = "character",
       type= c("raw.area", "compensated.corrected.area") )}
     }
   }
@@ -77,6 +77,10 @@ pressure correction part of the \code{\link{appac}} function.
 \examples{
 ## view class
 showClass("Correction")
+## view slots
+getSlots("Correction")
+## view methods
+attr(.S4methods(class = "Correction"), "info")$generic
 }
 
 \keyword{classes}

@@ -264,18 +264,17 @@ setMethod(
 setMethod(
   "plotGlobalFit",
   signature(
-    object = "Appac",
-    size = "numeric",
-    colors = "list"
+    object = "Appac"
   ),
-  function(object, size, colors) {
-    if (length(colors) != 4 || !all(names(colors) %in% c(
+  function(object, size = 4, ...) {
+    if (!hasArg(colors) || (hasArg(colors) & (length(colors) != 4 || !all(names(colors) %in% c(
       "highlight_color",
       "lowlight_color",
       "line_color",
       "fill_color"
-    ))) {
-      stop("Incorrect colors.")
+    ))))) {
+      colors <- default_palette
+      message("Using default color palette.")
     }
     data <- data.frame(
       x = unname(unlist(X(object@correction))),
@@ -285,7 +284,7 @@ setMethod(
       n = unname(unlist(weight(object@correction)))
     )
     fit_coefs <- coefficients(object@correction)
-    p <- .plot_global_fit(data, fit_coefs, colors)
+    p <- .plot_global_fit(data, fit_coefs, colors, size)
     return(p)
   }
 )
@@ -295,11 +294,9 @@ setMethod(
   signature(
     object = "Appac",
     sample = "character",
-    peak = "character",
-    size = "numeric",
-    colors = "list"
+    peak = "character"
   ),
-  function(object, sample, peak, size, colors) {
+  function(object, sample, peak, size = 4, ...) {
     if (!sample %in% names(object@correction@samples)) {
       stop(
         "Unknown sample '", sample,
@@ -320,13 +317,14 @@ setMethod(
         )
       )
     }
-    if (length(colors) != 4 || !all(names(colors) %in% c(
+    if (!hasArg(colors) || (hasArg(colors) & (length(colors) != 4 || !all(names(colors) %in% c(
       "highlight_color",
       "lowlight_color",
       "line_color",
       "fill_color"
-    ))) {
-      stop("Incorrect colors.")
+    ))))) {
+      colors <- default_palette
+      message("Using default color palette.")
     }
     p <- .plot_control_chart(
       data = object, sample = sample,
@@ -343,11 +341,9 @@ setMethod(
   signature(
     object = "Appac",
     sample = "character",
-    peak = "character",
-    size = "numeric",
-    colors = "list"
+    peak = "character"
   ),
-  function(object, sample, peak, size, colors) {
+  function(object, sample, peak, size = 4, ...) {
     if (!sample %in% names(object@correction@samples)) {
       stop(
         "Unknown sample '", sample,
@@ -363,13 +359,14 @@ setMethod(
                sep = "' ")
       )
     }
-    if (length(colors) != 4 || !all(names(colors) %in% c(
+    if (!hasArg(colors) || (hasArg(colors) & (length(colors) != 4 || !all(names(colors) %in% c(
       "highlight_color",
       "lowlight_color",
       "line_color",
       "fill_color"
-    ))) {
-      stop("Incorrect colors.")
+    ))))) {
+      colors <- default_palette
+      message("Using default color palette.")
     }
     p <- .plot_local_fit(
       data = object,

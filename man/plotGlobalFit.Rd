@@ -1,7 +1,7 @@
 \docType{methods}
 \name{plotGlobalFit}
 \alias{plotGlobalFit}
-\alias{plotGlobalFit,Appac,numeric,list-method}
+\alias{plotGlobalFit,Appac-method}
 \title{
 Plot the global (APPAC) fit function
 }
@@ -10,7 +10,7 @@ S4 method to plot an APPAC global fit.
 \loadmathjax{}
 }
 \usage{
-\S4method{plotGlobalFit}{Appac,numeric,list}(object, size, colors)
+\S4method{plotGlobalFit}{Appac}(object, size = 4, ...)
 %plotGlobalFit(object, colors)
 }
 \arguments{
@@ -20,8 +20,10 @@ an object of class \code{\link{Appac}}
   \item{size}{
 a numeric value which controls the size of the axis labels and titles
 }
-  \item{colors}{
-    a list containing the colors of the color scheme to be used in the plot:
+  \item{\dots}{
+    additional arguments:
+
+    \code{colors}: a named list containing the color scheme to be used in the plot:
       \describe{
 %      \itemize{
         \item{highlight_color: }{the color in which the datapoints are represented}
@@ -82,14 +84,14 @@ appac_control <- list(min_data_points = 5, drift_model = "linear")
 
 ## appac will throw warnings that sample and peak names have been changed
 x <- suppressWarnings(
-       appac(data = PGC_TCD, 
-       P_ref = P_ref, 
-       appac_control = appac_control, 
+       appac(data = PGC_TCD,
+       P_ref = P_ref,
+       appac_control = appac_control,
        appac_colnames = appac_colnames)
      )
 
 ## View results
-colors <- list(highlight_color="black", lowlight_color="darkgrey", 
+colors <- list(highlight_color="black", lowlight_color="darkgrey",
                line_color="darkblue", fill_color="lightblue")
 plotGlobalFit(x, size = 4, colors)
 }

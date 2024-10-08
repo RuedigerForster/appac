@@ -79,14 +79,17 @@ setGeneric("driftFactor", function(object, date, area) {
   standardGeneric("driftFactor")
 })
 
-setGeneric("plotGlobalFit", function(object, size, colors) {
-  standardGeneric("plotGlobalFit")
-})
+setGeneric("plotGlobalFit", function(object, size = 4, ...)
+  standardGeneric("plotGlobalFit"),
+  signature = "object"
+)
 
-setGeneric("plotControlChart", function(object, sample, peak, size, colors) {
-  standardGeneric("plotControlChart")
-})
+setGeneric("plotControlChart", function(object, sample, peak, size = 4, ...)
+  standardGeneric("plotControlChart"),
+  signature = c("object", "sample", "peak")
+)
 
-setGeneric("plotLocalFit", function(object, sample, peak, size, colors) {
-  standardGeneric("plotLocalFit")
-})
+setGeneric("plotLocalFit", function(object, sample, peak, size = 4, ...)
+  standardGeneric("plotLocalFit"),
+  signature = c("object", "sample", "peak")
+)

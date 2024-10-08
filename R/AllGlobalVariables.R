@@ -2,6 +2,13 @@
 column_names <- c("Sample_Name", "Peak_Name", "Injection_Date",
                   "Air_Pressure", "Raw_Area")
 
+default_palette <- list(
+  highlight_color = "cadetblue2",
+  lowlight_color = "honeydew4",
+  line_color = "darkgoldenrod4",
+  fill_color = "darkgoldenrod1"
+)
+
 main_plot_theme <- function(size = 4) {
   theme(
     text = element_text(size = rel(size)),
