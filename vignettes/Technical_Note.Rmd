@@ -328,13 +328,9 @@ colors <- list(
 )
 
 suppressWarnings(appac:::.plot_local_fit(
- data = x,
- sample = s,
- peak = p,
- colors = colors,
- show.compensated.areas = FALSE,
- plot.residuals = TRUE,
- bins = 50
+ data = x, sample = s, peak = p,
+ colors = colors, show.compensated.areas = FALSE,
+ plot.residuals = TRUE, bins = 50
 ))
 ```
 

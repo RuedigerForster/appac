@@ -27,25 +27,25 @@ The appac package features a main function, which is:
 
 `appac (data, P_ref, appac_control,  appac.colnames)`
 
-It is surrounded by several other functions (which are actually methods) that help to retrieve the input and the fitted (output) data.
+It is surrounded by several other functions (most of which are actually methods) that help to retrieve the input and the fitted (output) data.
 
 The package uses the S4 class system. To familiarize yourself with S4 classes and methods, we recommend the section ‘The S4 object system’ from Hadley Wickham's excellent book ‘Advanced R’, which is thankfully available online [2].
 
 ## Input to the appac function
 
-The input consists of a data frame `data`, a numeric value `P_ref`, a list `appac_control` and a list `appac.colnames`.
+The input consists of a data frame `data`, a numeric value `P_ref`, a list `appac_control`.
 
-The data frame must contain at least 5 columns, which represent the following information:
+Data frame `data` must contain at least 5 columns, which represent the following information:
 
 * the name (character string) of the sample analyzed
 * the date (character string or class Date, IDate) at which the measurement was made
 * the name (character string) of the peak to which the measurement relates
 * the measured peak area (numeric value)
 * the measured atmospheric pressure (numeric value) which prevailed during the time the chromatogram was recorded
-* (optional) the retention time of the peak (numeric value)
 
-Each row of the data frame must represent a single peak. 
+Other columns that may exist in the input data frame will be discarded. 
 
+Each row of the data frame must represent a single peak. The column headers must be named. 
 
 > **Note:**  
 The user must decide in advance which peaks/components are to be evaluated; only these peaks may be included in the input data frame. Otherwise the data frame must be filtered accordingly before it is passed to the appac function. 
@@ -55,39 +55,37 @@ It is important that each of the predetermined peaks from each chromatogram is l
 
 
 > **Note:**  
-It is important that report each of the pre-determined peaks from every chromatogram in the data frame. Peaks which have not been integrated or are absent in the sample must be reported as `NA`.
+It is essential to report each of the pre-determined peaks from every chromatogram in the data frame. Peaks which have not been integrated or are absent in the sample must be reported as ‘NA’.
 
-The column headers must be named. The names of the column headers must be passed to the appac function through the list `appac.colnames`.
+> **Note:**  
+As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If these names do not comply with these conventions, the function stops with an error. 
+
+To condition 'data', call the function 'check_cols()'. Additionally, 'check_cols()' requires a list `appac.colnames`, which is a list of the column headers with the required information:
 
 `appac.colnames = list(sample.col, peak.col, date.col, pressure.col, area.col)`
 
-Other columns that may exist in the input data frame are discarded. The information passed to the appac function must relate to a single channel (i.e. detector) of a single instrument. If more than one instrument or channel is to be included in the data frame, following columns must be added and the data frame must be filtered accordingly:
+The information passed to the appac function must only relate to a single channel (i.e. detector) of a single instrument. If more than one instrument or channel is to be included in the data frame, following columns must be added and the data frame must be filtered accordingly before passing it to 'appac':
 
 * the name (character string) of the Instrument on which the chromatographic analysis was performed
 * the name (character string) of the chromatographic channel to which the measured information relates
 
-`P_ref` is a fixed reference pressure to which the output of the appac function refers. `P_ref` can be set to an arbitrary value which is within the range of the atmospheric pressures of the data set; however, the means of the input data and the output data will then differ. It is therefore recommended to set P_ref to a value near the center of the pressure range. The `median` value is a good estimate.
+`P_ref` is a fixed reference pressure to which the output of the appac function refers. `P_ref` can be set to an arbitrary value which is within the range of the atmospheric pressures of the data set; however, the means of the input data and the output data may differ. It is therefore recommended to set P_ref to a value near the center of the pressure range. The `median` value is a robust estimate for this purpose.
 
 `appac_control` is a list of some parameters which control the workflow of the function. Currently, the list currently only one item: 
 
 * min_data_points: the minimum number of non-NA data points of a local fit to be considered a valid data point of the global fit, see also internals of the appac function.
-(The list may be expanded in future releases.)
+
+* drift_model: this is an experimental feature how the drift is modeled. The allowed values are "linear" and "quadratic" or their abbreviations.
+
+(This list may be expanded in future releases.)
 
 ## Output of the appac function
 
-The output is an object of S4 class `Appac`. It consists of two elements: class `Drift` and class `Correction`. Class `Drift` contains the calculated drift factors for the data set, while class `Correction` holds the coefficients for the pressure correction function and the fitted data. The output can easily be inspected by the command `View(appac-object)`.
+The output is an object of S4 class `Appac`. It consists of two elements: class `Drift` and class `Correction`. Class `Drift` contains calculated daily drift factors, while class `Correction` holds the coefficients for the pressure correction function and the fitted data. The output can be inspected by the command `View(appac-object)`.
 
 The package provides a set of methods which allow the user to extract certain information from the output objects. These methods are called with the name of the respective object as their first argument.
 
 #### Results of the atmospheric pressure correction
-
-> **Note:**  
-As the sample and peak names of the input `data` are used internally as variable names, they must comply with the R conventions for variable names. If these names do not comply with the conventions, they are converted to compliant names and a respective warning is issued. To be able to use one of these names in a method, the changed names must be used. 
-
-<span style="color:red">
-**Question:**
-Maybe it is a good idea to provide a conversion function `checkNames` which does this conversion on occasion of a user call instead of doing it inside of a black box. Your opinions, please.
-</span>
 
 The atmospheric pressure correction function fits one parameter, coefficient $\kappa$. The following methods are related to the fitted value of $\kappa$ and return:
 
@@ -99,7 +97,7 @@ The atmospheric pressure correction function fits one parameter, coefficient $\k
 
 A drift factor is calculated based on the residuals of atmospheric pressure correction function, which are common to all measured control samples. The drift factor is a function of the measured peak area in addition to the date.
 
-* `driftFactor(drift-object, date-vector, area-matrix)`: a data frame with the columns `date` and `drift.factor` is returned
+* `driftFactor(drift-object, date-vector, area-matrix)`: a data frame with the columns `date` and `drift.factor` is returned.
 
 #### Input data
 
