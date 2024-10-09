@@ -24,7 +24,7 @@ check_cols <- function(data, appac_colnames) {
   #----------------------------------------------------------
   orig_col_names <- colnames(data)
   # remove '\n' in column names
-  orig_col_names <- sapply(orig_col_names, function(x) gsub("\n", "", x))
+  orig_col_names <- unname(sapply(orig_col_names, function(x) gsub("\n", "", x)))
   idx <- sapply(appac_colnames, function(x) which(orig_col_names == x))
   data <- data[, idx]
   orig_col_names <- orig_col_names[idx]
@@ -35,9 +35,9 @@ check_cols <- function(data, appac_colnames) {
   #----------------------------------------------------------
   orig_peak_names <- unique(data$Peak_Name)
   # remove '\n' in peak names
-  orig_peak_names <- sapply(orig_peak_names, function(x) gsub("\n", "", x))
+  orig_peak_names <- unname(sapply(orig_peak_names, function(x) gsub("\n", "", x)))
   clean_peak_names <- make.names(orig_peak_names)
-  orig_sample_names <- unique(data$Sample_Name)
+  orig_sample_names <- unname(unique(data$Sample_Name))
   # remove '\n' in peak names
   orig_sample_names <- sapply(orig_sample_names, function(x) gsub("\n", "", x))
   clean_sample_names <- make.names(orig_sample_names)
@@ -54,7 +54,7 @@ check_cols <- function(data, appac_colnames) {
     message(
       "Column names: '",
       paste0(orig_col_names[ind], collapse = "', '"),
-      "' have been replaced by: '",
+      "'\n\t have been replaced by: '",
       paste0(colnames(data)[ind], collapse = "', '"),
       "'\n"
     )
@@ -64,7 +64,7 @@ check_cols <- function(data, appac_colnames) {
     message(
       "Peak names: '",
       paste0(orig_peak_names[idx], collapse = "', '"),
-      "' have been replaced by: '",
+      "'\n\t have been replaced by: '",
       paste0(clean_peak_names[idx], collapse = "', '"),
       "'\n"
     )
@@ -74,7 +74,7 @@ check_cols <- function(data, appac_colnames) {
     message(
       "Sample names: '",
       paste0(orig_sample_names, collapse = "', '"),
-      "' have been replaced by: '",
+      "'\n\t have been replaced by: '",
       paste0(clean_sample_names, collapse = "', '"),
       "'\n"
     )

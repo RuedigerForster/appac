@@ -23,7 +23,7 @@ BugReports: https://github.com/RuedigerForster/appac/issues
 Encoding: UTF-8
 LazyData: TRUE
 Imports: methods, stats, utils, dplyr, data.table, Rbeast, VGAM, gridExtra,
-    ggplot2, ggpubr, patchwork, mathjaxr
+    ggplot2, ggpubr, patchwork, mathjaxr, moments, car, lmtest
 Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 RdMacros: mathjaxr
 ByteCompile: TRUE
@@ -33,6 +33,7 @@ Depends: R (>= 3.5.0)
 Collate:
     'AllGlobalVariables.R'
     'helper.R'
+    'checks.R'
     'plot.R'
     'AllClasses.R'
     'AllGenerics.R'
@@ -41,4 +42,3 @@ Collate:
     'appac_step_2.R'
     'appac_step_3.R'
     'appac.R'
-    'checks.R'

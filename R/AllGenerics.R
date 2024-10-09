@@ -1,3 +1,5 @@
+## repaired a sever bug in expectedArea
+
 setGeneric("Y", function(object) {
   standardGeneric("Y")
 })

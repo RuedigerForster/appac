@@ -9,6 +9,7 @@ setMethod("Y", signature(object = "Correction"), function(object) {
   return(res)
 })
 
+## buggy?
 setMethod("X", signature(object = "Correction"), function(object) {
   res <- lapply(object@local.fits, function(x) x$area.ref)
   nam <- lapply(object@local.fits, function(x) x$peak)
@@ -191,7 +192,7 @@ setMethod(
   }
 )
 
-
+## sweep(object@samples[[sample]]$compensated.corrected.area, 2, object@local.fits[[sample]]$area.ref, "-")
 setMethod(
   "residualAreas",
   signature(
@@ -207,8 +208,19 @@ setMethod(
              "compensated.corrected.area"
            )) {
     type <- match.arg(type)
-    res <- object@samples[[sample]][[type]] -
-      object@samples[[sample]]$expected.area
+    if (type == "raw.area") {
+      res <- rawAreas(object, sample) -
+        expectedAreas(object, sample)
+      # object@samples[[sample]][[type]] -
+      # object@samples[[sample]]$expected.area
+      # res <- sweep(object@samples[[sample]][[type]], 2, 
+      #              object@local.fits[[sample]]$area.ref, "-")
+    } else {
+      # res <- object@samples[[sample]][[type]] -
+      #          object@samples[[sample]]$expected.area
+      res <- sweep(object@samples[[sample]][[type]], 2, 
+                   object@local.fits[[sample]]$area.ref, "-")
+    }
     return(res)
   }
 )

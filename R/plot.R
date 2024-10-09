@@ -1,3 +1,4 @@
+## ERROR: check the warning and intervention limits in residuals
 
 .plot_global_fit <-  function(
     data = NA,
@@ -99,8 +100,8 @@
   y1 <- rawAreas(object = data@correction, sample = sample)[, peak]
   y2 <- compensatedRawAreas(object = data@drift, sample = sample)[, peak]
   # outliers
-  outliers <- .has_outliers(data@correction, sample, sig.level = "0.05")
-  if (!is.null(outliers) && outliers$check[peak]) {
+  outliers <- .has_outliers(data@correction, sample, conf.int = 0.95)
+  if (!is.null(outliers)) { #  && outliers$pass[peak]
     s <- ifelse(outliers$outliers[, peak], 2, 1)
   } else {
     s <- rep(1, length(dates))
@@ -168,6 +169,12 @@
     sample = sample,
     type = "raw"
   )[, peak]
+  # y2 <- residualAreas(
+  #   object = data@correction,
+  #   sample = sample,
+  #   type = "corrected"
+  # )[, peak]
+  
   y2 <- compensatedRawAreas(
     object = data@drift,
     sample = sample
@@ -177,7 +184,8 @@
   )[, peak]
   l.y.limit <- -span / 2.5
   h.y.limit <- span / 2.5
-  Z <- as.data.frame(cbind(x = x, y1 = y1, y2 = y2, s = s))
+  Z <- data.frame(cbind(x = x, y1 = y1, y2 = y2, s = s))
+  std_dev <- sd(Z[, 3])
   binwidth <- (max(Z[, 2], na.rm = TRUE) - min(Z[, 2], na.rm = TRUE)) / bins
   p2 <- ggplot(Z) +
     # raw areas
@@ -334,8 +342,8 @@
     sample = sample
   )[, peak]
   # outliers
-  outliers <- .has_outliers(data@correction, sample, sig.level = "0.05")
-  if (!is.null(outliers) && outliers$check[peak]) {
+  outliers <- .has_outliers(data@correction, sample, conf.int = 0.95)
+  if (!is.null(outliers)) { #  && outliers$pass[peak]
     s <- ifelse(outliers$outliers[, peak], 2, 1)
   } else {
     s <- rep(1, length(dates))
@@ -437,12 +445,18 @@
   y1 <- residualAreas(
     object = data@correction,
     sample = sample,
+    type = "raw.area"
+  )[, peak]
+  y2 <- residualAreas(
+    object = data@correction,
+    sample = sample,
     type = "compensated.corrected.area"
   )[, peak]
-  y2 <- compensatedCorrectedAreas(
-    object = data@correction,
-    sample = sample
-  )[, peak] - aref
+    
+  #   compensatedCorrectedAreas(
+  #   object = data@correction,
+  #   sample = sample
+  # )[, peak] - aref
   l.y.limit <- -span / 2.5
   h.y.limit <- span / 2.5
   Z <- as.data.frame(cbind(x = x, y1 = y1, y2 = y2, s = s))

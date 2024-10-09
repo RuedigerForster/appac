@@ -33,19 +33,6 @@ appac ( data,
     output areas will differ. It is recommended to choose the median of the
     pressure measurements of the dataset.
   }
-  \item{appac_colnames}{
-  a list of column names of \code{data}, which contain the following information:
-	    \itemize{
-	      \item \code{sample_col}: character. The name of the column containing
-	      the names of the samples
-	      \item \code{peak_col}: character. The name of the column containing the
-	      names of the peaks
-	      \item \code{pressure_col}: character. The name of the column containing
-	      the measured atmospheric pressures
-	      \item \code{area_col}: character. The name of the column containing the
-	      measured peak areas
-      }
-  }
   \item{appac_control}{
     a list of the control elements which determine how the data are processed.
 	    \itemize{
@@ -101,11 +88,9 @@ appac_colnames <- list(
   area_col      = "raw.area"
 )
 
-## default column names are contained in global variable column_names:
-column_names
-
 ## check column, sample and peak names
 PGC_TCD <- check_cols(PGC_TCD, appac_colnames)
+str(PGC_TCD)
 
 ## define P_ref as the median of the measured ambient pressures at injection time
 ## data set contains some NA, because of missing peaks

@@ -9,18 +9,14 @@ before calling \code{appac()}.
 }
 \usage{
 check_cols(data,
-           appac_colnames = list(sample_col = NA,
-                                 peak_col = NA,
-                                 date_col = NA,
-                                 pressure_col = NA,
-                                 area_col = NA)
+           appac_colnames)
 }
 \arguments{
   \item{data}{
     the input \code{data.frame}.
 }
   \item{appac_colnames}{
-    the relevant colnames of the input \code{data.frame}. A list of column names
+    the relevant colnames of the input \code{data.frame}. A list of the column names
     of \code{data}, which contain the following information:
 	    \itemize{
 	      \item \code{sample_col}: character. The name of the column containing
