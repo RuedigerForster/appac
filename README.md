@@ -44,12 +44,9 @@ To use this R package from GitHub, the user needs to install **R** at first.  â€
    * [suse](https://cran.r-project.org/bin/linux/suse/)
    * [ubuntu](https://cran.r-project.org/bin/linux/ubuntu/)
 4. Follow the installation guide to install R.
-5. Open R by typing R on your console
-6. Run the following commmand to check the installed version of R.
-   ```
-   version
-   ```
-   
+5. Open R Console by typing R on your console
+6. Run the following commmand to confirm the installation of R:
+   `version`
    
 
 #### Install R on Mac
@@ -58,11 +55,15 @@ To use this R package from GitHub, the user needs to install **R** at first.  â€
 2. Click on â€‹[Download R for macOS]([https://cran.r-project.org/bin/macosx/]
 3. Download the latest version of R for macOS and open the `.pkg` file.
 4. Follow the installation instructions.
-5. Open R by typing R on your console
-6. Run the following commmand to check the installed version of R.
-   ```
-   version
-   ```### Install RStudio
+5. Open R Console by typing R on your console
+6. Run the following commmand to confirm the installation of R:
+   `version`
+
+
+
+
+
+### Install RStudio
 
 While RStudio is not mandatory, it is a popular integrated development environment (IDE) for R. It provides a more user-friendly interface for coding, debugging, and managing R projects. If the user prefers working with a GUI, RStudio can make the process easier.
 
@@ -98,7 +99,7 @@ install.packages("devtools")
 devtools::install_github("RuedigerForster/appac")
 ```
 
-## Attention :warning:
+## :warning: Attention
 
 <p>This package is work in progress and its contents will change frequently. Please
 feel free to check it out. What you find here is working and most of it is documented.</p>
