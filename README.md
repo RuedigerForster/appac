@@ -46,7 +46,10 @@ To use this R package from GitHub, the user needs to install **R** at first.  â€
 4. Follow the installation guide to install R.
 5. Open R Console by typing R on your console
 6. Run the following commmand to confirm the installation of R:
-   `version`
+   ```
+   version
+   ```
+   
    
 
 #### Install R on Mac
@@ -57,9 +60,10 @@ To use this R package from GitHub, the user needs to install **R** at first.  â€
 4. Follow the installation instructions.
 5. Open R Console by typing R on your console
 6. Run the following commmand to confirm the installation of R:
-   `version`
 
-
+    ```
+    version
+    ```
 
 
 
@@ -84,7 +88,6 @@ While RStudio is not mandatory, it is a popular integrated development environme
 1. Visit the [RStudio download website](https://posit.co/download/rstudio-desktop/#download).
 2. Download the RStudio `.dmg` package according to your MacOS version
 3. Install the package
-
 
 ### Install APPAC
 
