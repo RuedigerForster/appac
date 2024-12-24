@@ -2,9 +2,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/RuedigerForster/appac/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/RuedigerForster/appac/actions/workflows/R-CMD-check.yaml)
-
-[![lint](https://github.com/RuedigerForster/appac/actions/workflows/lint.yaml/badge.svg)](https://github.com/RuedigerForster/appac/actions/workflows/lint.yaml)
+[![R-CMD-check](https://github.com/RuedigerForster/appac/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/RuedigerForster/appac/actions/workflows/R-CMD-check.yaml) [![lint](https://github.com/RuedigerForster/appac/actions/workflows/lint.yaml/badge.svg)](https://github.com/RuedigerForster/appac/actions/workflows/lint.yaml)
 
 <!-- badges: end -->
 
@@ -51,7 +49,6 @@ To use this R package from GitHub, the user needs to install **R** at first.  â€
    ```
    
    
-
 #### Install R on Mac
 
 1. Go to the [R Project website](https://cran.r-project.org/).
@@ -60,12 +57,58 @@ To use this R package from GitHub, the user needs to install **R** at first.  â€
 4. Follow the installation instructions.
 5. Open R Console by typing R on your console
 6. Run the following commmand to confirm the installation of R:
+   
+   ```
+   version
+   ```
 
-    ```
-    version
-    ```
+### Install RStudio
+
+While RStudio is not mandatory, it is a popular integrated development environment (IDE) for R. It provides a more user-friendly interface for coding, debugging, and managing R projects. If the user prefers working with a GUI, RStudio can make the process easier.
+
+#### Install RStudio on Windows
+
+1. Visit the [RStudio website](https://posit.co/downloads/).
+2. Download the **RStudio Desktop Installer** for Windows.
+3. Run the installer and follow the on-screen instructions.
+
+#### Install RStudio on Linux
+
+1. Visit the [RStudio download website](https://posit.co/download/rstudio-desktop/#download).
+2. Download the RStudio `.deb` or `.rpm` package according to your operating system and version
+3. Install the package
+
+#### Install RStudio on Mac
+
+1. Visit the [RStudio download website](https://posit.co/download/rstudio-desktop/#download).
+2. Download the RStudio `.dmg` package according to your MacOS version
+3. Install the package
+
+### Install APPAC
+
+The user can install a GitHub package directly in R using tools like `devtools`.
+If RStudio is used, the same commands can be run in its console. However, the installation process itself relies only on R.
+
+```r
+# Install devtools if not already installed
+install.packages("devtools")
+
+# Use devtools to install the package from GitHub
+devtools::install_github("RuedigerForster/appac")
+```
+
+## Usage
+
+To effectively utilize the APPAC package, we recommend consulting the [User Guide](vignettes/User_Guide.html) and the [Wiki](https://github.com/RuedigerForster/appac/wiki) for detailed instructions and additional resources.
 
 
+
+## :warning: Attention
+
+<p>This package is work in progress and its contents will change frequently. Please
+feel free to check it out. What you find here is working and most of it is documented.</p>
+
+<p>Collaborators are welcome.</p>
 
 ### Install RStudio
 
