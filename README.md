@@ -2,9 +2,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/RuedigerForster/appac/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/RuedigerForster/appac/actions/workflows/R-CMD-check.yaml)
-
-[![lint](https://github.com/RuedigerForster/appac/actions/workflows/lint.yaml/badge.svg)](https://github.com/RuedigerForster/appac/actions/workflows/lint.yaml)
+[![R-CMD-check](https://github.com/RuedigerForster/appac/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/RuedigerForster/appac/actions/workflows/R-CMD-check.yaml) [![lint](https://github.com/RuedigerForster/appac/actions/workflows/lint.yaml/badge.svg)](https://github.com/RuedigerForster/appac/actions/workflows/lint.yaml)
 
 <!-- badges: end -->
 
@@ -16,12 +14,12 @@ APPAC is a versatile software package designed to improve measurement accuracy. 
 
 ### Install R
 
-To use this R package from GitHub, the user needs to install **R** at first.  ​**R**​ is the core programming language and environment required to run and install any R package. It must be installed on the user's system.
+To use this R package from GitHub, the user needs to install **R** at first.  **R** is the core programming language and environment required to run and install any R package. It must be installed on the user's system.
 
 #### Install R on Windows
 
 1. Go to the [R Project website](https://cran.r-project.org/).
-2. Click on ​[Download R for Windows](https://cran.r-project.org/bin/windows/).
+2. Click on [Download R for Windows](https://cran.r-project.org/bin/windows/).
 3. Click on install R for the first time.
 4. Click Download R for Windows. Open the downloaded file.
 5. Select the language you would like to use during the installation. Then click OK.
@@ -36,7 +34,7 @@ To use this R package from GitHub, the user needs to install **R** at first.  �
 #### Install R on Linux
 
 1. Go to the [R Project website](https://cran.r-project.org/).
-2. Click on ​[Download R for Linux](https://cran.r-project.org/bin/linux/).
+2. Click on [Download R for Linux](https://cran.r-project.org/bin/linux/).
 3. Click on one of the following links according to your operating system
    * [debian](https://cran.r-project.org/bin/linux/debian/)
    * [fedora](https://cran.r-project.org/bin/linux/fedora/)
@@ -49,23 +47,19 @@ To use this R package from GitHub, the user needs to install **R** at first.  �
    ```
    version
    ```
-   
-   
 
 #### Install R on Mac
 
 1. Go to the [R Project website](https://cran.r-project.org/).
-2. Click on ​[Download R for macOS]([https://cran.r-project.org/bin/macosx/]
+2. Click on [Download R for macOS]([https://cran.r-project.org/bin/macosx/]
 3. Download the latest version of R for macOS and open the `.pkg` file.
 4. Follow the installation instructions.
 5. Open R Console by typing R on your console
 6. Run the following commmand to confirm the installation of R:
-
-    ```
-    version
-    ```
-
-
+   
+   ```
+   version
+   ```
 
 ### Install RStudio
 
@@ -101,6 +95,12 @@ install.packages("devtools")
 # Use devtools to install the package from GitHub
 devtools::install_github("RuedigerForster/appac")
 ```
+
+## Usage
+
+To effectively utilize the APPAC package, we recommend consulting the [User Guide](vignettes/User_Guide.html) and the [Wiki](https://github.com/RuedigerForster/appac/wiki) for detailed instructions and additional resources.
+
+
 
 ## :warning: Attention
 
